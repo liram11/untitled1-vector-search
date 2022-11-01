@@ -3,3 +3,5 @@ arxiv-metadata-oai-snapshot.json
 *.DS_STORE
 *.log
 
+.venv
+.vscode
