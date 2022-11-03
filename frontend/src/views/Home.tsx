@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useImmer } from "use-immer";
 import { getPapers, getSemanticallySimilarPapersbyText } from '../api';
 import { Card } from "./Card"
 import SearchBar from "material-ui-search-bar";
@@ -13,26 +14,23 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import Tooltip from '@mui/material/Tooltip';
 
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+type SearchState = {
+  index: number;
+  text: string;
+}[]
 
-interface Props {
-  papers: any[];
-  setPapers: (state: any) => void;
-  categories: string[];
-  setCategories: (state: any) => void;
-  years: string[];
-  setYears: (state: any) => void;
-  searchState: string;
-  setSearchState: (state: any) => void;
-  total: number;
-  setTotal: (state: any) => void;
-}
+const DEFAULT_SEARCH_STATE = [{ index: 0, text: ''}]
 
-export const Home = (props: Props) => {
-  const [error, setError] = useState<string>('');
-  const [skip, setSkip] = useState(0);
-  const [limit, setLimit] = useState(15);
+export const Home = () => {
+  const [papers, setPapers] = useImmer<any[]>([]);
+  const [categories, setCategories] = useImmer<string[]>([]);
+  const [years, setYears] = useImmer<string[]>([]);
+  const [searchState, setSearchState] = useImmer<string>('');
+  // const [searchState, setSearchState] = useImmer<SearchState>(DEFAULT_SEARCH_STATE);
+  const [total, setTotal] = useImmer<number>(0);
+  const [error, setError] = useImmer<string>('');
+  const [skip, setSkip] = useImmer(0);
+  const [limit, setLimit] = useImmer(15);
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -78,27 +76,27 @@ export const Home = (props: Props) => {
     'astro-ph.GA'
   ]
 
-  const handleSearchChange = async (newValue: string) => {
-    props.setSearchState(newValue);
+  const handleSearchChange = async (newText: string) => {
+    setSearchState(newText);
   }
 
-  const handleYearSelection = (event: SelectChangeEvent<typeof props.years>) => {
+  const handleYearSelection = (event: SelectChangeEvent<typeof years>) => {
     const {
       target: { value },
     } = event;
-    props.setYears(
+    setYears(
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
     setSkip(0);
-    console.log(props.years)
+    console.log(years)
   };
 
-  const handleCatSelection = (event: SelectChangeEvent<typeof props.categories>) => {
+  const handleCatSelection = (event: SelectChangeEvent<typeof categories>) => {
     const {
       target: { value },
     } = event;
-    props.setCategories(
+    setCategories(
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
@@ -107,15 +105,15 @@ export const Home = (props: Props) => {
 
   const queryPapers = async () => {
     try {
-      if ( props.searchState ) {
-        const result = await getSemanticallySimilarPapersbyText(props.searchState, props.years, props.categories)
-        props.setPapers(result.papers)
-        props.setTotal(result.total)
+      if (searchState) {
+        const result = await getSemanticallySimilarPapersbyText(searchState, years, categories)
+        setPapers(result.papers)
+        setTotal(result.total)
       } else {
         setSkip(skip + limit);
-        const result = await getPapers(limit, skip, props.years, props.categories);
-        props.setPapers(result.papers)
-        props.setTotal(result.total)
+        const result = await getPapers(limit, skip, years, categories);
+        setPapers(result.papers)
+        setTotal(result.total)
       }
     } catch (err) {
       setError(String(err));
@@ -124,109 +122,113 @@ export const Home = (props: Props) => {
 
   // Execute this one when the component loads up
   useEffect(() => {
-    props.setPapers([]);
-    props.setCategories([]);
-    props.setYears([]);
+    setPapers([]);
+    setCategories([]);
+    setYears([]);
     queryPapers();
   }, []);
 
   return (
     <>
       <main role="main">
-      <section className="jumbotron text-center mb-0 bg-white" style={{ paddingTop: '40px', width: "95%"}}>
-      <div className="container">
-       <h1 className="jumbotron-heading">arXiv Paper Search</h1>
-       <p className="lead text-muted">
-           This demo uses the built in Vector Search capabilities of Redis Enterprise
-           to show how unstructured data, such as paper abstracts (text), can be used to create a powerful
-           search engine.
-       </p>
-       <p className="lead text-muted">
-           <strong>Enter a search query below to discover scholarly papers hosted by <a href="https://arxiv.org/" target="_blank">arXiv</a> (Cornell University).</strong>
-       </p>
-       <div className="container">
-        <SearchBar
-          placeholder='Search'
-          value={props.searchState}
-          onChange={(newValue) => handleSearchChange(newValue)}
-          onRequestSearch={() => queryPapers()}
-          style={{
-            margin: '20px 0',
-          }}
-        />
-       </div>
-       <div>
-        <FormControl sx={{ m: 1, width: 150 }}>
-          <InputLabel id="demo-multiple-checkbox-label">Year</InputLabel>
-          <Select
-            labelId="demo-multiple-checkbox-label"
-            id="demo-multiple-checkbox"
-            multiple
-            value={props.years}
-            onChange={handleYearSelection}
-            input={<OutlinedInput label="Tag" />}
-            renderValue={(selected) => selected.join(', ')}
-            MenuProps={MenuProps}
-          >
-            {yearOptions.map((year) => (
-              <MenuItem key={year} value={year}>
-                <Checkbox checked={props.years.indexOf(year) > -1} />
-                <ListItemText primary={year} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl sx={{ m: 1, width: 300 }}>
-          <InputLabel id="demo-multiple-checkbox-label">Category</InputLabel>
-          <Select
-            labelId="demo-multiple-checkbox-label"
-            id="demo-multiple-checkbox"
-            multiple
-            value={props.categories}
-            onChange={handleCatSelection}
-            input={<OutlinedInput label="Category" />}
-            renderValue={(selected) => selected.join(', ')}
-            MenuProps={MenuProps}
-          >
-            {categoryOptions.map((cat) => (
-              <MenuItem key={cat} value={cat}>
-                <Checkbox checked={props.categories.indexOf(cat) > -1} />
-                <ListItemText primary={cat} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-    </div>
-      </div>
-     </section>
-      <div className="album py-5 bg-light">
-        <div className="container">
-          <p style={{fontSize: 15}}>
-            <Tooltip title="Filtered paper count" arrow>
-              <em>{props.total} searchable arXiv papers</em>
-            </Tooltip>
-          </p>
-        </div>
-        <div className="container">
-          {props.papers && (
-            <div className="row">
-              {props.papers.map((paper) => (
-                 <Card
-                  key={paper.pk}
-                  title={paper.title}
-                  authors={paper.authors}
-                  paperId={paper.paper_id}
-                  numPapers={15}
-                  paperCat={paper.categories}
-                  paperYear={paper.year}
-                  categories={props.categories}
-                  years={props.years}
-                  similarity_score={paper.similarity_score}
-                  setState={props.setPapers}
-                  setTotal={props.setTotal}
+        <section className="jumbotron text-center mb-0 bg-white" style={{ paddingTop: '40px', width: "95%" }}>
+          <div className="container">
+            <h1 className="jumbotron-heading">arXiv Paper Search</h1>
+            <p className="lead text-muted">
+              This demo uses the built in Vector Search capabilities of Redis Enterprise
+              to show how unstructured data, such as paper abstracts (text), can be used to create a powerful
+              search engine.
+            </p>
+            <p className="lead text-muted">
+              <strong>Enter a search query below to discover scholarly papers hosted by <a href="https://arxiv.org/" target="_blank">arXiv</a> (Cornell University).</strong>
+            </p>
+            <div className="container">
+              <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                <FormControl sx={{ width: 150, mr: 1, mt: 1 }}>
+                  <InputLabel id="demo-multiple-checkbox-label">Year</InputLabel>
+                  <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={years}
+                    onChange={handleYearSelection}
+                    input={<OutlinedInput label="Tag" />}
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                  >
+                    {yearOptions.map((year) => (
+                      <MenuItem key={year} value={year}>
+                        <Checkbox checked={years.indexOf(year) > -1} />
+                        <ListItemText primary={year} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ m: 0, width: 300, mt: 1 }}>
+                  <InputLabel id="demo-multiple-checkbox-label">Category</InputLabel>
+                  <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={categories}
+                    onChange={handleCatSelection}
+                    input={<OutlinedInput label="Category" />}
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                  >
+                    {categoryOptions.map((cat) => (
+                      <MenuItem key={cat} value={cat}>
+                        <Checkbox checked={categories.indexOf(cat) > -1} />
+                        <ListItemText primary={cat} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
+
+              <div>
+                <SearchBar
+                  placeholder='Search'
+                  value={searchState}
+                  onChange={(newValue) => handleSearchChange(newValue)}
+                  onRequestSearch={() => queryPapers()}
+                  style={{
+                    margin: '20px 0',
+                  }}
+                />
+              </div>
+            </div>
+
+          </div>
+        </section>
+        <div className="album py-5 bg-light">
+          <div className="container">
+            <p style={{ fontSize: 15 }}>
+              <Tooltip title="Filtered paper count" arrow>
+                <em>{total} searchable arXiv papers</em>
+              </Tooltip>
+            </p>
+          </div>
+          <div className="container">
+            {papers && (
+              <div className="row">
+                {papers.map((paper) => (
+                  <Card
+                    key={paper.pk}
+                    title={paper.title}
+                    authors={paper.authors}
+                    paperId={paper.paper_id}
+                    numPapers={15}
+                    paperCat={paper.categories}
+                    paperYear={paper.year}
+                    categories={categories}
+                    years={years}
+                    similarity_score={paper.similarity_score}
+                    setState={setPapers}
+                    setTotal={setTotal}
                   />
                 ))}
-            </div>
+              </div>
             )}
           </div>
         </div>
