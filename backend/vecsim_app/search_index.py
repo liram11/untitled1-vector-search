@@ -1,5 +1,6 @@
 import re
 
+from config import INDEX_NAME
 from redis.asyncio import Redis
 from redis.commands.search.query import Query
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
@@ -110,7 +111,7 @@ class SearchIndex:
         prefix: str
     ):
         # Create Index
-        await redis_conn.ft().create_index(
+        await redis_conn.ft(INDEX_NAME).create_index(
             fields = fields,
             definition= IndexDefinition(prefix=[prefix], index_type=IndexType.HASH)
         )
@@ -129,7 +130,7 @@ class SearchIndex:
         """
         tag = "("
         if years:
-            years = "|".join([self.escaper.escape(str(year)) for year in years])
+            years = "|".join([self.escaper.escape(year) for year in years])
             tag += f"(@year:{{{years}}})"
         if categories:
             categories = "|".join([self.escaper.escape(cat) for cat in categories])
