@@ -13,25 +13,22 @@ import ListItemText from '@mui/material/ListItemText';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import Tooltip from '@mui/material/Tooltip';
+import { SearchStates } from '../types/search';
+import { Search } from '../components/Search';
 
-type SearchState = {
-  index: number;
-  text: string;
-}[]
 
-const DEFAULT_SEARCH_STATE = [{ index: 0, text: ''}]
 
 export const Home = () => {
   const [papers, setPapers] = useImmer<any[]>([]);
   const [categories, setCategories] = useImmer<string[]>([]);
   const [years, setYears] = useImmer<string[]>([]);
-  const [searchState, setSearchState] = useImmer<string>('');
-  // const [searchState, setSearchState] = useImmer<SearchState>(DEFAULT_SEARCH_STATE);
+  const [searchStates, setSearchStates] = useImmer<SearchStates>(['']);
   const [total, setTotal] = useImmer<number>(0);
   const [error, setError] = useImmer<string>('');
   const [skip, setSkip] = useImmer(0);
   const [limit, setLimit] = useImmer(15);
 
+  console.log('!!!', searchStates)
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
   const MenuProps = {
@@ -76,8 +73,22 @@ export const Home = () => {
     'astro-ph.GA'
   ]
 
-  const handleSearchChange = async (newText: string) => {
-    setSearchState(newText);
+  const handleSearchChange = (index: number, newText: string) => {
+    setSearchStates(searchStates => {
+      searchStates[index] = newText
+    })
+  }
+
+  const handleAddSearchArticle = () => {
+    setSearchStates(searchStates => {
+      searchStates.push('')
+    })
+  }
+
+  const handleRemoveSearchArticle = (index: number) => {
+    setSearchStates(searchStates => {
+      searchStates.splice(index, 1)
+    })
   }
 
   const handleYearSelection = (event: SelectChangeEvent<typeof years>) => {
@@ -105,8 +116,8 @@ export const Home = () => {
 
   const queryPapers = async () => {
     try {
-      if (searchState) {
-        const result = await getSemanticallySimilarPapersbyText(searchState, years, categories)
+      if (searchStates) {
+        const result = await getSemanticallySimilarPapersbyText(searchStates[0], years, categories)
         setPapers(result.papers)
         setTotal(result.total)
       } else {
@@ -143,7 +154,7 @@ export const Home = () => {
               <strong>Enter a search query below to discover scholarly papers hosted by <a href="https://arxiv.org/" target="_blank">arXiv</a> (Cornell University).</strong>
             </p>
             <div className="container">
-              <div style={{display: 'flex', flexWrap: 'wrap'}}>
+              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                 <FormControl sx={{ width: 150, mr: 1, mt: 1 }}>
                   <InputLabel id="demo-multiple-checkbox-label">Year</InputLabel>
                   <Select
@@ -186,16 +197,13 @@ export const Home = () => {
                 </FormControl>
               </div>
 
+              <Search
+                searchStates={searchStates}
+                onSearchStateChange={handleSearchChange}
+              />
+
               <div>
-                <SearchBar
-                  placeholder='Search'
-                  value={searchState}
-                  onChange={(newValue) => handleSearchChange(newValue)}
-                  onRequestSearch={() => queryPapers()}
-                  style={{
-                    margin: '20px 0',
-                  }}
-                />
+                <button onClick={handleAddSearchArticle}>Add article</button>
               </div>
             </div>
 
