@@ -4,22 +4,15 @@ import asyncio
 import numpy as np
 import pickle
 import redis.asyncio as redis
-import os
 
 from redis.commands.search.field import TagField
+from vecsim_app import config
 from vecsim_app.models import Paper
 from vecsim_app.search_index import SearchIndex
 
 
-DATA_LOCATION = os.environ['DATA_LOCATION']
-
-REDIS_HOSTPORT = os.environ['REDIS_HOSTPORT']
-REDIS_USERNAME = os.environ['REDIS_USERNAME']
-REDIS_PASSWORD = os.environ['REDIS_PASSWORD']
-INDEX_TYPE = "HNSW"
-
 def read_paper_df() -> t.List:
-    with open(DATA_LOCATION + "/arxiv_embeddings_10000.pkl", "rb") as f:
+    with open(config.DATA_LOCATION + "/arxiv_embeddings_10000.pkl", "rb") as f:
         df = pickle.load(f)
     return df
 
@@ -33,7 +26,7 @@ async def gather_with_concurrency(n, redis_conn, *papers):
             paper['categories'] = paper['categories'].replace(",", "|")
             p = Paper(**paper)
             # save model TODO -- combine these two objects eventually
-            await p.save(redis_conn)
+            await p.save()
             # save vector data
             key = "paper_vector:" + str(p.paper_id)
             await redis_conn.hset(
@@ -50,11 +43,7 @@ async def gather_with_concurrency(n, redis_conn, *papers):
 
 async def load_all_data():
     # TODO use redis-om connection
-    
-    redis_conn = redis.from_url(f'redis://{REDIS_HOSTPORT}',
-                                username=REDIS_USERNAME,
-                                password=REDIS_PASSWORD)
-    print(f"Ping successful: {await redis_conn.ping()}")
+    redis_conn = redis.from_url(config.REDIS_URL)
     search_index = SearchIndex()
     if await redis_conn.dbsize() > 300:
         print("Papers already loaded")
@@ -69,7 +58,7 @@ async def load_all_data():
         categories_field = TagField("categories", separator = "|")
         year_field = TagField("year", separator = "|")
         # create a search index
-        if INDEX_TYPE == "HNSW":
+        if config.INDEX_TYPE == "HNSW":
             await search_index.create_hnsw(
                 categories_field,
                 year_field,
