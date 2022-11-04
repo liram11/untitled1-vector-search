@@ -28,7 +28,6 @@ export const Home = () => {
   const [skip, setSkip] = useImmer(0);
   const [limit, setLimit] = useImmer(15);
 
-  console.log('!!!', searchStates)
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
   const MenuProps = {
@@ -73,24 +72,6 @@ export const Home = () => {
     'astro-ph.GA'
   ]
 
-  const handleSearchChange = (index: number, newText: string) => {
-    setSearchStates(searchStates => {
-      searchStates[index] = newText
-    })
-  }
-
-  const handleSearchItemAdd = () => {
-    setSearchStates(searchStates => {
-      searchStates.push('')
-    })
-  }
-
-  const handleSearchItemRemove = (index: number) => {
-    setSearchStates(searchStates => {
-      searchStates.splice(index, 1)
-    })
-  }
-
   const handleYearSelection = (event: SelectChangeEvent<typeof years>) => {
     const {
       target: { value },
@@ -114,10 +95,28 @@ export const Home = () => {
     setSkip(0);
   };
 
+  const handleSearchChange = (index: number, newText: string) => {
+    setSearchStates(searchStates => {
+      searchStates[index] = newText
+    })
+  }
+
+  const handleSearchItemAdd = () => {
+    setSearchStates(searchStates => {
+      searchStates.push('')
+    })
+  }
+
+  const handleSearchItemRemove = (index: number) => {
+    setSearchStates(searchStates => {
+      searchStates.splice(index, 1)
+    })
+  }
+
   const queryPapers = async () => {
     try {
       if (searchStates) {
-        const result = await getSemanticallySimilarPapersbyText(searchStates[0], years, categories)
+        const result = await getSemanticallySimilarPapersbyText(searchStates, years, categories)
         setPapers(result.papers)
         setTotal(result.total)
       } else {
@@ -133,9 +132,6 @@ export const Home = () => {
 
   // Execute this one when the component loads up
   useEffect(() => {
-    setPapers([]);
-    setCategories([]);
-    setYears([]);
     queryPapers();
   }, []);
 
@@ -206,6 +202,13 @@ export const Home = () => {
               <div>
                 <button onClick={handleSearchItemAdd}>Add article</button>
               </div>
+
+              <br />
+
+              <div>
+                <button onClick={queryPapers}>Search!</button>
+              </div>
+
             </div>
 
           </div>

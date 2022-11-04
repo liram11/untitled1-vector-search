@@ -68,13 +68,13 @@ export const getSemanticallySimilarPapers = async (paper_id: string,
 };
 
 
-export const getSemanticallySimilarPapersbyText = async (text: string,
+export const getSemanticallySimilarPapersbyText = async (searchItems: string[],
                                                          years: string[],
                                                          categories: string[],
                                                          search='KNN',
                                                          limit=15) => {
   let body = {
-    user_text: text,
+    articles: searchItems.map(text => ({text})),
     search_type: search,
     number_of_results: limit,
     years: years,
