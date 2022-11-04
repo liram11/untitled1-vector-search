@@ -3,7 +3,6 @@ import torch
 import numpy as np
 from categories import CATEGORIES
 from transformers import BertForSequenceClassification
-from sklearn.preprocessing import MultiLabelBinarizer
 from transformers import AutoTokenizer
 import pickle
 
@@ -22,8 +21,6 @@ def predict_categories(text, model, tokenizer, mlb, proba_threshold = 0.5):
     probs = sigmoid(logits.squeeze().cpu())
     predictions = np.zeros(probs.shape)
     predictions[np.where(probs >= proba_threshold)] = 1
-
-    # print(predictions)
 
     classes = mlb.inverse_transform(predictions.reshape(1, -1))
 
