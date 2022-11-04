@@ -1,21 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useImmer } from "use-immer";
 import { getPapers, getSemanticallySimilarPapersbyText } from '../api';
 import { Card } from "./Card"
-import SearchBar from "material-ui-search-bar";
 
+import {
+  OutlinedInput,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  ListItemText,
+  Button,
+  Checkbox,
+  Tooltip,
+  Select,
+  SelectChangeEvent
+} from '@mui/material';
 
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import ListItemText from '@mui/material/ListItemText';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Checkbox from '@mui/material/Checkbox';
-import Tooltip from '@mui/material/Tooltip';
 import { SearchStates } from '../types/search';
 import { Search } from '../components/Search';
-
+import { AddItemButton } from '../ui/AddItemButton';
 
 
 export const Home = () => {
@@ -138,7 +141,7 @@ export const Home = () => {
   return (
     <>
       <main role="main">
-        <section className="jumbotron text-center mb-0 bg-white" style={{ paddingTop: '40px', width: "95%" }}>
+        <section className="jumbotron text-center bg-white" style={{ paddingTop: '40px' }}>
           <div className="container">
             <h1 className="jumbotron-heading">arXiv Paper Search</h1>
             <p className="lead text-muted">
@@ -149,7 +152,7 @@ export const Home = () => {
             <p className="lead text-muted">
               <strong>Enter a search query below to discover scholarly papers hosted by <a href="https://arxiv.org/" target="_blank">arXiv</a> (Cornell University).</strong>
             </p>
-            <div className="container">
+            <div className="container pb-4">
               <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                 <FormControl sx={{ width: 150, mr: 1, mt: 1 }}>
                   <InputLabel id="demo-multiple-checkbox-label">Year</InputLabel>
@@ -199,16 +202,11 @@ export const Home = () => {
                 onSearchItemRemove={handleSearchItemRemove}
               />
 
-              <div>
-                <button onClick={handleSearchItemAdd}>Add article</button>
+              <AddItemButton text="Add another article" onClick={handleSearchItemAdd} />
+
+              <div className="pt-4">
+                <Button variant="contained" size="large" onClick={queryPapers}>Search!</Button>
               </div>
-
-              <br />
-
-              <div>
-                <button onClick={queryPapers}>Search!</button>
-              </div>
-
             </div>
 
           </div>

@@ -19,22 +19,29 @@ export const SearchBar = ({
   isRemovalEnabled,
   onSearchItemRemove
 }: Props) => {
-  console.log('isRemovalEnabledisRemovalEnabled', isRemovalEnabled)
-
   const handleItemRemove = () => isRemovalEnabled && onSearchItemRemove(index)
+
+  const classes: {[key: string]: string} = {}
+
+  if (!isRemovalEnabled) {
+    classes.iconButton ='search_bar__button--hidden'
+  }
+
   return (
     <div>
       <Bar
-        placeholder='Search'
+        placeholder="Enter article's title, abstract or any other text related to this article"
         value={text}
         onChange={(newValue) => onSearchStateChange(index, newValue)}
-        searchIcon={<ClearIcon style={{ color: grey[500] }} />}
+        searchIcon={<ClearIcon />}
         onRequestSearch={handleItemRemove} // allow only to delete now
         onCancelSearch={handleItemRemove}
 
         style={{
           margin: '20px 0',
+          boxShadow: '0px 2px 6px 0px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)'
         }}
+        classes={classes}
       />
     </div>
   )

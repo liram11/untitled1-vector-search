@@ -1,5 +1,4 @@
 
-// import SearchBar from "material-ui-search-bar";
 import { OnSearchItemRemove, OnSearchStateChange, SearchStates } from "../../types/search";
 
 import { SearchBar } from './SearchBar'
