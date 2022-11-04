@@ -38,28 +38,28 @@ def load_models(multilabel_model_path = 'categories', multilabel_binarizer_path 
         problem_type="multi_label_classification"
     )
 
-    tokenizer = AutoTokenizer.from_pretrained("checkpoint")
+    tokenizer = AutoTokenizer.from_pretrained(multilabel_model_path)
 
     with open(multilabel_binarizer_path, 'rb') as handle:
         mlb = pickle.load(handle)
     
     return model, tokenizer, mlb
 
-def inference(queries: List[str]):
+def inference(queries: List[str], multilabel_model_path = 'categories', multilabel_binarizer_path = 'mlb.pickle'):
 
-    model, tokenizer, mlb = load_models('categories', 'mlb.pickle')
+    model, tokenizer, mlb = load_models(multilabel_model_path, multilabel_binarizer_path)
 
     def flatten(l):
         return [item for sublist in l for item in sublist]
     
     categories = []
 
-    for query in [queries]:
+    for query in queries:
         cat, probs = predict_categories(query, model, tokenizer, mlb, proba_threshold = 0.15)
 
         categories.append(cat)
 
-    categories = set(flatten(categories))
+    categories = list(set(flatten(categories)))
 
     return {'predicted_categories': categories}
 

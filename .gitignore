@@ -10,3 +10,5 @@ data/wandb/**
 data/paper-multilabel-finetuning
 
 *.zip
+
+data/checkpoint
