@@ -20,12 +20,18 @@ import { SearchStates } from '../types/search';
 import { Search } from '../components/Search';
 import { AddItemButton } from '../ui/AddItemButton';
 
+import { useSearchParams } from 'react-router-dom';
+import { ensureArray, getArrayParam, parseURLSearchParams } from '../utils/query_string';
 
 export const Home = () => {
+  const [urlParams, setUrlParams] = useSearchParams();
+
+  const parsed_params = parseURLSearchParams(urlParams)
+
   const [papers, setPapers] = useImmer<any[]>([]);
-  const [categories, setCategories] = useImmer<string[]>([]);
-  const [years, setYears] = useImmer<string[]>([]);
-  const [searchStates, setSearchStates] = useImmer<SearchStates>(['']);
+  const [categories, setCategories] = useImmer<string[]>(getArrayParam(parsed_params, 'categories', []));
+  const [years, setYears] = useImmer<string[]>(getArrayParam(parsed_params, 'years', []));
+  const [searchStates, setSearchStates] = useImmer<SearchStates>(getArrayParam(parsed_params, 'searchStates', ['']));
   const [total, setTotal] = useImmer<number>(0);
   const [error, setError] = useImmer<string>('');
   const [skip, setSkip] = useImmer(0);
@@ -75,6 +81,25 @@ export const Home = () => {
     'astro-ph.GA'
   ]
 
+  useEffect(() => {
+    setUrlParams({
+      years,
+      categories,
+      searchStates
+    })
+  }, [years, categories, searchStates])
+
+  useEffect(() => {
+    const years = parsed_params['years'] || []
+    const categories = parsed_params['categories'] || []
+    const searchStates = parsed_params['searchStates'] || ['']
+
+    setYears(ensureArray(years))
+    setCategories(ensureArray(categories))
+    setSearchStates(ensureArray(searchStates))
+  }, [urlParams]);
+
+
   const handleYearSelection = (event: SelectChangeEvent<typeof years>) => {
     const {
       target: { value },
@@ -83,8 +108,7 @@ export const Home = () => {
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
-    setSkip(0);
-    console.log(years)
+    setSkip(0)
   };
 
   const handleCatSelection = (event: SelectChangeEvent<typeof categories>) => {
@@ -95,7 +119,7 @@ export const Home = () => {
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
-    setSkip(0);
+    setSkip(0)
   };
 
   const handleSearchChange = (index: number, newText: string) => {
