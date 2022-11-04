@@ -79,13 +79,13 @@ export const Home = () => {
     })
   }
 
-  const handleAddSearchArticle = () => {
+  const handleSearchItemAdd = () => {
     setSearchStates(searchStates => {
       searchStates.push('')
     })
   }
 
-  const handleRemoveSearchArticle = (index: number) => {
+  const handleSearchItemRemove = (index: number) => {
     setSearchStates(searchStates => {
       searchStates.splice(index, 1)
     })
@@ -200,10 +200,11 @@ export const Home = () => {
               <Search
                 searchStates={searchStates}
                 onSearchStateChange={handleSearchChange}
+                onSearchItemRemove={handleSearchItemRemove}
               />
 
               <div>
-                <button onClick={handleAddSearchArticle}>Add article</button>
+                <button onClick={handleSearchItemAdd}>Add article</button>
               </div>
             </div>
 

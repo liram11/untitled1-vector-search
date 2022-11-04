@@ -1,12 +1,13 @@
 
 // import SearchBar from "material-ui-search-bar";
-import { OnSearchStateChange, SearchStates } from "../../types/search";
+import { OnSearchItemRemove, OnSearchStateChange, SearchStates } from "../../types/search";
 
 import { SearchBar } from './SearchBar'
 
 interface Props {
   searchStates: SearchStates
   onSearchStateChange: OnSearchStateChange
+  onSearchItemRemove: OnSearchItemRemove
 }
 
 export const Search = ({ searchStates, ...props }: Props) => {
@@ -19,6 +20,7 @@ export const Search = ({ searchStates, ...props }: Props) => {
             key={index}
             index={index}
             text={searchState}
+            isRemovalEnabled={searchStates.length > 1}
             {...props}
           />
       )}
