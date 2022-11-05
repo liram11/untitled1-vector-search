@@ -15,6 +15,9 @@ from vecsim_app.api import routes
 from vecsim_app.spa import SinglePageApplication
 
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 app = FastAPI(
     title=config.PROJECT_NAME,
     docs_url=config.API_DOCS,
@@ -60,7 +63,8 @@ if __name__ == "__main__":
         "host": "0.0.0.0",
         "reload": True,
         "port": int(config.SERVER_PORT),
-        "workers": 1
+        "workers": 1,
+        "log_level": "debug",
     }
     if env == "prod":
         server_attr.update({"reload": False,

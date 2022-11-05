@@ -3,6 +3,7 @@ arxiv-metadata-oai-snapshot.json
 *.log
 .tool-versions
 data/.ipynb_checkpoints/
+.env
 
 data/wandb/**
 data/paper-multilabel-finetuning

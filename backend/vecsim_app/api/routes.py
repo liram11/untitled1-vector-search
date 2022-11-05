@@ -123,9 +123,9 @@ async def find_papers_by_user_text(similarity_request: UserTextSimilarityRequest
         redis_client.ft(config.INDEX_NAME).search(
             query,
             query_params={
-                "vec_param": embeddings.make(similarity_request.user_text).tobytes()
+                "vec_param": embeddings.make(similarity_request.articles[0]['text']).tobytes()
             }
-        )
+        ),
     )
 
     # Get Paper records of those results

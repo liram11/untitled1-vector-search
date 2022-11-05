@@ -23,7 +23,7 @@ services:
     expose:
       - "8888"
     ports:
-      - "8888:8888"
+      - "8881:8888"
     depends_on:
       - "redis-vector-db"
 

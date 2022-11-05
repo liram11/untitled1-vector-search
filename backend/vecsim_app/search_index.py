@@ -129,21 +129,18 @@ class SearchIndex:
         Returns:
             str: RediSearch tag query string.
         """
-        tag = "("
+        tag = ["("]
         if years:
-            years = "|".join([self.escaper.escape(year) for year in years])
-            tag += f"(@year:{{{years}}})"
-        if categories:
-            categories = "|".join([self.escaper.escape(cat) for cat in categories])
-            if tag:
-                tag += f" (@categories:{{{categories}}})"
-            else:
-                assert False, f"Can't be here! tag={repr(tag)}"
-        tag += ")"
+            years = "|".join([self.escaper.escape(y) for y in years])
+            tag.append(f"(@year:{{{years}}})")
+        for cat in categories:
+            cat = self.escaper.escape(cat)
+            tag.append(f"(@category:{{{cat}}})")
+        tag.append(")")
         # if no tags are selected
         if len(tag) < 3:
-            tag = "*"
-        return tag
+            tag = ["*"]
+        return "".join(tag)
 
     def vector_query(
         self,

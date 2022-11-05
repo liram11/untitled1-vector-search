@@ -9,7 +9,7 @@ class SimilarityRequest(BaseModel):
     search_type: str = "KNN"
 
 class UserTextSimilarityRequest(BaseModel):
-    user_text: str
+    articles: list
     categories: list
     years: list
     number_of_results: int = 15
