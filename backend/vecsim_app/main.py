@@ -21,14 +21,6 @@ app = FastAPI(
     openapi_url=config.OPENAPI_DOCS
 )
 
-app.add_middleware(
-        CORSMiddleware,
-        allow_origins="*",
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"]
-)
-
 # Routers
 app.include_router(
     routes.paper_router,
@@ -58,12 +50,16 @@ app.mount(
 
 if __name__ == "__main__":
     import os
+    import logging
+    logging.basicConfig(level=logging.INFO)
+
     env = os.environ.get("DEPLOYMENT", "prod")
+    logging.info(f"Running in {env} mode")
 
     server_attr = {
         "host": "0.0.0.0",
         "reload": True,
-        "port": 8888,
+        "port": int(config.SERVER_PORT),
         "workers": 1
     }
     if env == "prod":
@@ -71,5 +67,13 @@ if __name__ == "__main__":
                             "workers": 2,
                             "ssl_keyfile": "key.pem",
                             "ssl_certfile": "full.pem"})
+        app.add_middleware(
+                CORSMiddleware,
+                allow_origins="*",
+                allow_credentials=True,
+                allow_methods=["*"],
+                allow_headers=["*"]
+        )
 
-    uvicorn.run("main:app", **server_attr)
+
+    uvicorn.run("vecsim_app.main:app", **server_attr)

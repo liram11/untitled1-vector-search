@@ -1,6 +1,6 @@
 import re
 
-from config import INDEX_NAME
+from vecsim_app.config import INDEX_NAME
 from redis.asyncio import Redis
 from redis.commands.search.query import Query
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
@@ -23,6 +23,7 @@ class TokenEscaper:
             self.escaped_chars_re = re.compile(self.DEFAULT_ESCAPED_CHARS)
 
     def escape(self, value: str) -> str:
+        value = str(value)
         def escape_symbol(match):
             value = match.group(0)
             return f"\\{value}"
@@ -137,7 +138,7 @@ class SearchIndex:
             if tag:
                 tag += f" (@categories:{{{categories}}})"
             else:
-                tag += f"(@categories:{{{categories}}})"
+                assert False, f"Can't be here! tag={repr(tag)}"
         tag += ")"
         # if no tags are selected
         if len(tag) < 3:
