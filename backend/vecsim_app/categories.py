@@ -1,4 +1,4 @@
-_map = {
+CATEGORIES = {
     "astro-ph": "Astrophysics",
     "astro-ph.CO": "Cosmology and Nongalactic Astrophysics",
     "astro-ph.EP": "Earth and Planetary Astrophysics",
