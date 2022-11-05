@@ -19,5 +19,5 @@ Generate data before trying to run this application.
 
 
 ```
-redis-cli -h $REDIS_HOST -p $REDIS_PORT --pass $REDIS_PASSWORD --user $REDIS_USERNAME
+redis-cli -h "$REDIS_HOST" -p "$REDIS_PORT" -a "$REDIS_PASSWORD"
 ```
