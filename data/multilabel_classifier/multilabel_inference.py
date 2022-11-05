@@ -29,7 +29,7 @@ def predict_categories(text, model, tokenizer, mlb, proba_threshold = 0.5):
 
     return classes, probs
 
-def load_models(multilabel_model_path = 'categories', multilabel_binarizer_path = 'mlb.pickle'):
+def load_models(multilabel_model_path = 'categories', multilabel_binarizer_path = 'mlb.pkl'):
     model = BertForSequenceClassification.from_pretrained(
         multilabel_model_path,
         problem_type="multi_label_classification"
@@ -42,7 +42,7 @@ def load_models(multilabel_model_path = 'categories', multilabel_binarizer_path 
     
     return model, tokenizer, mlb
 
-def inference(queries: List[str], multilabel_model_path = 'categories', multilabel_binarizer_path = 'mlb.pickle'):
+def inference(queries: List[str], multilabel_model_path = 'categories', multilabel_binarizer_path = 'mlb.pkl'):
 
     model, tokenizer, mlb = load_models(multilabel_model_path, multilabel_binarizer_path)
 
