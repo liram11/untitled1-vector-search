@@ -1,0 +1,21 @@
+---
+repos:
+  # python import sorter
+  - repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        name: isort (python)
+        args: [--profile=black]
+
+  # python code formatter
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+
+  # python style ckecker
+  - repo: https://github.com/PyCQA/flake8
+    rev: 3.7.9
+    hooks:
+      - id: flake8
