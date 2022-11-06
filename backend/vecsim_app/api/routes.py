@@ -133,6 +133,8 @@ async def find_papers_by_user_text(similarity_request: UserTextSimilarityRequest
     categories = [
         _cut_off_category_description(c) for c in similarity_request.categories
     ]
+    if not categories:
+        return {}
 
     query = search_index.vector_query(
         categories,
