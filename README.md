@@ -1,30 +1,39 @@
+# Untitled1: Redis Vector Search hackathon
+[Oct 24 - Nov 4, 2022 hackathon](https://hackathon.redisventures.com/) by Redis, Saturn Cloud, MLOps Community and NVIDIA Inception centered on **Vector Search** using the [arXiv scholarly papers](https://arxiv.org/) dataset.
 
-<div align="center">
-    <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/RedisVentures/redis-arXiv-search/blob/main/backend/vecsim_app/data/redis-logo.png?raw=true" width="30%"><img></a>
-    <br />
-    <br />
-<div display="inline-block">
-    <a href="https://docsearch.redisventures.com"><b>Hosted Demo</b></a>&nbsp;&nbsp;&nbsp;
-    <a href="https://github.com/RedisVentures/redis-arXiv-search"><b>Code</b></a>&nbsp;&nbsp;&nbsp;
-    <a href="https://datasciencedojo.com/blog/ai-powered-document-search/"><b>Blog Post</b></a>&nbsp;&nbsp;&nbsp;
-    <a href="https://redis.io/docs/stack/search/reference/vectors/"><b>Redis VSS Documentation</b></a>&nbsp;&nbsp;&nbsp;
-  </div>
-    <br />
-    <br />
-</div>
+*Demo app hosted at: **TBD***  <!-- TODO -->
 
-# Redis arXiv Search
-*This repository is the official codebase for the arxiv paper search app hosted at: **https://docsearch.redisventures.com***
+## Changes to original repo
+Original repo: https://github.com/RedisVentures/redis-arXiv-search
+
+1. **Improved paper embeddings**: changed model to [sentence-transformers/all-distilroberta-v1](https://www.sbert.net/docs/pretrained_models.html) included authors to the embedding vector:
+```python
+df['authors_clean'] = df['authors'].apply(lambda a: ' '.join(re.findall(r'\w\w+', a)).strip())
+df['text'] = df.apply(lambda r: Embeddings.clean_description(r['authors_clean'] + ' ' + r['title'] + ' ' + r['abstract']), axis=1)
+```
+
+2. **Enabled Redis search query to join categories with "AND" in addition to "OR" operator**. Thus, one can now define only the paper categories they're interested in and search for the papers that include all these categories, not just one. See [git blame](https://github.com/liram11/untitled1-vector-search/blame/2f26a01bb41cc86d95ef424f07cea39c8b97b27f/backend/vecsim_app/search_index.py#L130-L132).
+
+
+3. **Enabled multi-input vector search**. We decided that some it might be useful for a scientist to know what are the papers "in between" the papers *A*, *B* and *C*. For that, we extended our Web UI to accept multiple article abstracts as input (along with a single set of "years" and "categories" configuration), we encode each abstract as a vector and then find the *mean* vector of these vectors. In case of two input papers, this is the middle of the line segment between two coordinates. In case of three papers, this is a centroid of a triangle of three coordinates. Thus, searching similar articles within the sphere around these points of interests can bring some interesting results (for example, it can help find multi-disciplinary papers related to the given papers).
+
+4. **Implemented auto-detection of the cateogires**. We thought that it's a difficult work to assign the one of >150 categories manually and we trained and deployed a multi-label classification model that predicts categories for given text inputs. Our model performs relatively well showing ~0.74 evaluation result on multi-label text classfication (note that for demo purposes and for sake of saving computing resources it was trained only on 50% of the dataset). This model is deployed on the backend route `POST /predict-categories` and is called by the frontend in order to auto-select the dropdown checkbox of the category selection for all user input texts.
+
+5. TBD (guys)
+
+
+## How we used Redis
+TBD (artem)
+
+## How we used Saturn Cloud
+TBD (artem)
+
+---
+
 
 Through the RediSearch module, vector data types and search indexes can be added to Redis. This turns Redis into
 a highly performant, in-memory, vector database, which can be used for many types of applications.
-
-___
-
-Here we showcase Redis vector similarity search (VSS) applied to a document search/retrieval use case. Read more about AI-powered search in [our blog post](https://datasciencedojo.com/blog/ai-powered-document-search/) (shout out to our friends at Data Science Dojo).
-
-
-![Screen Shot 2022-09-20 at 12 20 16 PM](https://user-images.githubusercontent.com/13009163/191346916-4b8f648f-7552-4910-ad4e-9cc117230f00.png)
+Here we showcase Redis vector similarity search (VSS) applied to a document search/retrieval use case. 
 
 
 ## Getting Started
