@@ -13,7 +13,7 @@ export const YEAR_FILTER_OPTIONS = [
   '2011'
 ]
 
-export const CATEGORY_FILTER_OPTIONS = {
+export const CATEGORY_HUMAN_NAMES = {
   'astro-ph': 'Astrophysics',
   'astro-ph.CO': 'Cosmology and Nongalactic Astrophysics',
   'astro-ph.EP': 'Earth and Planetary Astrophysics',

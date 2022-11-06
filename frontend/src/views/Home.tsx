@@ -24,9 +24,9 @@ import { AddItemButton } from '../ui/AddItemButton';
 
 import { useSearchParams } from 'react-router-dom';
 import { ensureArray, getArrayParam, parseURLSearchParams } from '../utils/query_string';
-import { CATEGORY_FILTER_OPTIONS, YEAR_FILTER_OPTIONS } from '../constants/search_filter';
+import { CATEGORY_HUMAN_NAMES, YEAR_FILTER_OPTIONS } from '../constants/search_filter';
 import { useDebounce } from '../hooks/useDebounce';
-import { SuggestedCategories } from '../components/Search/SuggestedCategories';
+import { SuggestedCategories } from '../components/SuggestedCategories';
 import { LoadingButton } from '../ui/LoadingButton';
 
 export const Home = () => {
@@ -194,7 +194,7 @@ export const Home = () => {
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                   >
-                    {Object.entries(CATEGORY_FILTER_OPTIONS).map(([slug, name]) => (
+                    {Object.entries(CATEGORY_HUMAN_NAMES).map(([slug, name]) => (
                       <MenuItem key={slug} value={slug}>
                         <Checkbox checked={categories.indexOf(slug) > -1} />
                         <ListItemText primary={`${slug} (${name})`} />
