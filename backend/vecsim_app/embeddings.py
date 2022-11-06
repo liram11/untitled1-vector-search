@@ -5,7 +5,7 @@ from sentence_transformers import SentenceTransformer
 
 
 class Embeddings:
-    def __init__(self, model_name: str = "sentence-transformers/all-mpnet-base-v2"):
+    def __init__(self, model_name: str = "sentence-transformers/all-distilroberta-v1"):
         self.model_name = model_name
         self.model = SentenceTransformer(self.model_name)
 
