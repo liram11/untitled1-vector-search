@@ -12,7 +12,9 @@ def predict_categories_on_single_text(text, model, tokenizer, mlb, proba_thresho
     encoding = tokenizer(text, return_tensors="pt")
     encoding = {k: v.to(model.device) for k, v in encoding.items()}
 
+    print('encoding', encoding)
     outputs = model(**encoding)
+    print('outputs', outputs)
     logits = outputs.logits
 
     # apply sigmoid + threshold
@@ -20,6 +22,7 @@ def predict_categories_on_single_text(text, model, tokenizer, mlb, proba_thresho
     probs = sigmoid(logits.squeeze().cpu())
     predictions = np.zeros(probs.shape)
     predictions[np.where(probs >= proba_threshold)] = 1
+    print(predictions)
 
     classes = mlb.inverse_transform(predictions.reshape(1, -1))
 
