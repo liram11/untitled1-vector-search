@@ -16,6 +16,7 @@ import {
   SelectChangeEvent
 } from '@mui/material';
 
+
 import { SearchStates } from '../types/search';
 import { Search } from '../components/Search';
 import { AddItemButton } from '../ui/AddItemButton';
@@ -32,6 +33,7 @@ export const Home = () => {
   const parsed_params = parseURLSearchParams(urlParams)
 
   const [papers, setPapers] = useImmer<any[]>([]);
+  const [isLoadingPapers, setIsLoadingPapers] = useImmer<boolean>(false);
   const [categories, setCategories] = useImmer<string[]>(getArrayParam(parsed_params, 'categories', []));
   const [years, setYears] = useImmer<string[]>(getArrayParam(parsed_params, 'years', []));
   const [searchStates, setSearchStates] = useImmer<SearchStates>(getArrayParam(parsed_params, 'searchStates', ['']));
@@ -66,7 +68,7 @@ export const Home = () => {
       categories,
       searchStates
     })
-  }, [years, categories, searchStates])
+  }, [years, categories, searchStates, setUrlParams])
 
   useEffect(() => {
     const years = ensureArray(parsed_params['years'] || [])
@@ -76,7 +78,7 @@ export const Home = () => {
     setYears(years)
     setCategories(categories)
     setSearchStates(searchStates)
-  }, [urlParams]);
+  }, [parsed_params, setYears, setCategories, setSearchStates]);
 
 
   const handleYearSelection = (event: SelectChangeEvent<typeof years>) => {
@@ -122,6 +124,7 @@ export const Home = () => {
   }
 
   const queryPapers = async () => {
+    setIsLoadingPapers(true)
     try {
       if (searchStates) {
         const result = await getSemanticallySimilarPapersbyText(searchStates, years, categories)
@@ -135,12 +138,15 @@ export const Home = () => {
       }
     } catch (err) {
       setError(String(err));
+    } finally {
+      setIsLoadingPapers(false)
     }
   };
 
   // Execute this one when the component loads up
   useEffect(() => {
     queryPapers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const applySuggestedCategories = () => {
@@ -159,7 +165,7 @@ export const Home = () => {
               search engine.
             </p>
             <p className="lead text-muted">
-              <strong>Enter a search query below to discover scholarly papers hosted by <a href="https://arxiv.org/" target="_blank">arXiv</a> (Cornell University).</strong>
+              <strong>Enter a search query below to discover scholarly papers hosted by <a href="https://arxiv.org/" target="_blank" rel="noreferrer">arXiv</a> (Cornell University).</strong>
             </p>
             <div className="container pb-4">
               <div style={{ display: 'flex', flexWrap: 'wrap' }}>
