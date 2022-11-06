@@ -1,4 +1,4 @@
-*.pkl filter=lfs diff=lfs merge=lfs -text
+data/embeddings/arxiv_embeddings_10000.pkl filter=lfs diff=lfs merge=lfs -text
 data/multilabel_classifier/checkpoint/trainer_state.json filter=lfs diff=lfs merge=lfs -text
 data/multilabel_classifier/checkpoint/vocab.txt filter=lfs diff=lfs merge=lfs -text
 data/multilabel_classifier/checkpoint/optimizer.pt filter=lfs diff=lfs merge=lfs -text
