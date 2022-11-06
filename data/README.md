@@ -17,3 +17,7 @@ Generate data before trying to run this application.
     - Output: `arxiv_embeddings_300000pkl`.
 
 
+
+```
+redis-cli -h "$REDIS_HOST" -p "$REDIS_PORT" -a "$REDIS_PASSWORD"
+```

@@ -23,7 +23,7 @@ help:
 env:
 	@conda create -n arXiv python=3.9 -y
 	$(CONDA_ACTIVATE) arXiv
-	@cd backend/ && pip install -r requirements.txt
+	@cd backend/ && pip install -e .
 
 # help:
 # help:

@@ -1,0 +1,13 @@
+data/embeddings/arxiv_embeddings_10000.pkl filter=lfs diff=lfs merge=lfs -text
+data/multilabel_classifier/checkpoint/trainer_state.json filter=lfs diff=lfs merge=lfs -text
+data/multilabel_classifier/checkpoint/vocab.txt filter=lfs diff=lfs merge=lfs -text
+data/multilabel_classifier/checkpoint/optimizer.pt filter=lfs diff=lfs merge=lfs -text
+data/multilabel_classifier/checkpoint/rng_state.pth filter=lfs diff=lfs merge=lfs -text
+data/multilabel_classifier/checkpoint/scheduler.pt filter=lfs diff=lfs merge=lfs -text
+data/multilabel_classifier/checkpoint/tokenizer_config.json filter=lfs diff=lfs merge=lfs -text
+data/multilabel_classifier/checkpoint/training_args.bin filter=lfs diff=lfs merge=lfs -text
+data/multilabel_classifier/checkpoint/config.json filter=lfs diff=lfs merge=lfs -text
+data/multilabel_classifier/checkpoint/pytorch_model.bin filter=lfs diff=lfs merge=lfs -text
+data/multilabel_classifier/checkpoint/special_tokens_map.json filter=lfs diff=lfs merge=lfs -text
+data/multilabel_classifier/checkpoint/tokenizer.json filter=lfs diff=lfs merge=lfs -text
+data/multilabel_classifier/checkpoint/mlb.pkl filter=lfs diff=lfs merge=lfs -text
