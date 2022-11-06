@@ -7,7 +7,7 @@ export const parseURLSearchParams = (params: URLSearchParams): ParsedURLSearchPa
     const key = param[0]
     const value = param[1]
 
-    if (result[key]) {
+    if (result[key] !== undefined) {
       if (Array.isArray(result[key])) {
         (result[key] as string[]).push(value)
       } else {
