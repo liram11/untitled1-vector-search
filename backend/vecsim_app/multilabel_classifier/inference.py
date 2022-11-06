@@ -3,11 +3,11 @@ from typing import List
 
 import numpy as np
 import torch
-from categories import CATEGORIES
+from ..categories import CATEGORIES
 from transformers import AutoTokenizer, BertForSequenceClassification
 
 
-def predict_categories(text, model, tokenizer, mlb, proba_threshold=0.5):
+def predict_categories_on_single_text(text, model, tokenizer, mlb, proba_threshold=0.5):
 
     encoding = tokenizer(text, return_tensors="pt")
     encoding = {k: v.to(model.device) for k, v in encoding.items()}
@@ -44,15 +44,10 @@ def load_models(
     return model, tokenizer, mlb
 
 
-def inference(
+def predict_categories(
     queries: List[str],
-    multilabel_model_path="categories",
-    multilabel_binarizer_path="mlb.pkl",
+    model, tokenizer, mlb,proba_threshold=0.15
 ):
-
-    model, tokenizer, mlb = load_models(
-        multilabel_model_path, multilabel_binarizer_path
-    )
 
     def flatten(l):
         return [item for sublist in l for item in sublist]
@@ -60,12 +55,12 @@ def inference(
     categories = []
 
     for query in queries:
-        cat, probs = predict_categories(
-            query, model, tokenizer, mlb, proba_threshold=0.15
+        cat, probs = predict_categories_on_single_text(
+            query, model, tokenizer, mlb, proba_threshold=proba_threshold
         )
 
         categories.append(cat)
 
     categories = list(set(flatten(categories)))
 
-    return {"predicted_categories": categories}
+    return categories
