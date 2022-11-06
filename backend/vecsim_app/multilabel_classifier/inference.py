@@ -12,22 +12,22 @@ def predict_categories_on_single_text(text, model, tokenizer, mlb, proba_thresho
     encoding = tokenizer(text, return_tensors="pt")
     encoding = {k: v.to(model.device) for k, v in encoding.items()}
 
-    print('encoding', encoding)
     outputs = model(**encoding)
-    print('outputs', outputs)
     logits = outputs.logits
 
     # apply sigmoid + threshold
     sigmoid = torch.nn.Sigmoid()
     probs = sigmoid(logits.squeeze().cpu())
+    # predictions = probs.detach().numpy()
     predictions = np.zeros(probs.shape)
     predictions[np.where(probs >= proba_threshold)] = 1
-    print(predictions)
 
     classes = mlb.inverse_transform(predictions.reshape(1, -1))
 
     if len(classes) > 0:
-        classes = [CATEGORIES[x] for x in classes[0]]
+        classes = classes[0]
+    else:
+        classes = []
 
     return classes, probs
 
@@ -49,7 +49,7 @@ def load_models(
 
 def predict_categories(
     queries: List[str],
-    model, tokenizer, mlb,proba_threshold=0.15
+    model, tokenizer, mlb,proba_threshold=0.45
 ):
 
     def flatten(l):
@@ -62,8 +62,7 @@ def predict_categories(
             query, model, tokenizer, mlb, proba_threshold=proba_threshold
         )
 
-        categories.append(cat)
+        categories.extend(cat)
 
-    categories = list(set(flatten(categories)))
-
-    return categories
+    # return sorted(categories.items())
+    return sorted(set(categories))
