@@ -31,6 +31,10 @@ RUN pip install -e .
 # add static react files to fastapi image
 COPY --from=ReactImage /app/frontend/build /app/backend/vecsim_app/templates/build
 
+# copy models
+COPY data/embeddings /app/data/embeddings
+COPY data/multilabel_classifier /app/data/multilabel_classifier
+
 WORKDIR /app/backend/vecsim_app
 
 CMD ["sh", "./entrypoint.sh"]
