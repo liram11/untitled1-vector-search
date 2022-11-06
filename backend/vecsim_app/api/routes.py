@@ -46,7 +46,7 @@ async def papers_from_results(total, results) -> t.Dict[str, t.Any]:
         for i, p in enumerate(results.docs)
     ]
     dump = '\n'.join([f"{r['similarity_score']:.3f} {r['title']}" for r in results])
-    print('Retrieved {len(results)} papers:' + dump)
+    print(f'Retrieved {len(results)} papers:' + dump)
     return {
         'total': total,
         'papers': results,
