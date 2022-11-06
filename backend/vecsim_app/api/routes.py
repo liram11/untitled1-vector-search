@@ -39,21 +39,17 @@ async def process_paper(p, i: int) -> t.Dict[str, t.Any]:
     return paper
 
 
-async def papers_from_results(total, results_list) -> t.Dict[str, t.Any]:
+async def papers_from_results(total, results) -> t.Dict[str, t.Any]:
     # extract papers from VSS results
     results = [
         await process_paper(p, i)
-        for res in results_list
-        for i, p in enumerate(res.docs)
+        for i, p in enumerate(results.docs)
     ]
-    print('\n'.join([f"{r['similarity_score']:.3f} {r['title']}" for r in results]))
-    # dedup
-    results = list({d["paper_id"]: d for d in results}.values())
-    # sort by similarity score
-    results = sorted(results, key=lambda x: -x['similarity_score'])
+    dump = '\n'.join([f"{r['similarity_score']:.3f} {r['title']}" for r in results])
+    print('Retrieved {len(results)} papers:' + dump)
     return {
-        "total": total,
-        "papers": results,
+        'total': total,
+        'papers': results,
     }
 
 
@@ -105,7 +101,7 @@ async def find_papers_by_text(categories_request: CategoriesPredictionRequest):
     }
 
     # Get Paper records of those results
-    return await papers_from_results(total.total, [results])
+    return await papers_from_results(total.total, results)
 
 
 @r.post("/vectorsearch/text", response_model=t.Dict)
@@ -137,7 +133,7 @@ async def find_papers_by_text(similarity_request: SimilarityRequest):
     )
 
     # Get Paper records of those results
-    return await papers_from_results(total.total, [results])
+    return await papers_from_results(total.total, results)
 
 
 @r.post("/vectorsearch/text/user", response_model=t.Dict)
@@ -157,22 +153,22 @@ async def find_papers_by_user_text(similarity_request: UserTextSimilarityRequest
         years=similarity_request.years, categories=similarity_request.categories
     )
 
-    query_coroutines = [redis_client.ft(config.INDEX_NAME).search(count_query)]
-    for article in similarity_request.articles:
-        if not article["text"].strip():
-            continue
-        query_coroutines.append(
-            redis_client.ft(config.INDEX_NAME).search(
-                query,
-                query_params={"vec_param": embeddings.make(article["text"]).tobytes()},
-            )
-        )
+    articles = [a['text'] for a in similarity_request.articles if a['text'].strip()]
+    article_embeddings = [embeddings.make(a) for a in articles]
+    mid_embedding = sum(article_embeddings) / len(article_embeddings)
+    
+    # debug:
+    for ae in article_embeddings:
+        print(ae[:5])
+    print(mid_embedding[:5])
 
-    # obtain results of the queries
-    total, *results_list = await asyncio.gather(*query_coroutines)
-
-    # results = [r for results in results_list for r in results]
-    # print(results)
+    total, result = await asyncio.gather(
+        redis_client.ft(config.INDEX_NAME).search(count_query),
+        redis_client.ft(config.INDEX_NAME).search(
+            query,
+            query_params={"vec_param": mid_embedding.tobytes()},
+        ),
+    )
 
     # Get Paper records of those results
-    return await papers_from_results(total.total, results_list)
+    return await papers_from_results(total.total, result)
