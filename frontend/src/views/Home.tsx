@@ -141,7 +141,9 @@ export const Home = () => {
   }, []);
 
   const applySuggestedCategories = () => {
-    setCategories(suggestedCategories)
+    const mergedCategories = new Set([...categories, ...suggestedCategories])
+
+    setCategories(Array.from(mergedCategories))
   }
 
   return (
@@ -180,7 +182,7 @@ export const Home = () => {
                     ))}
                   </Select>
                 </FormControl>
-                <FormControl sx={{ m: 0, width: '100%', mt: 1 }}>
+                <FormControl sx={{ m: 0, flex: 1, minWidth: 300, mt: 1 }}>
                   <InputLabel id="demo-multiple-checkbox-label">Categories (exact match)</InputLabel>
                   <Select
                     labelId="demo-multiple-checkbox-label"
