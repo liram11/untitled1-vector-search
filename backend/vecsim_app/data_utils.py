@@ -20,7 +20,9 @@ def _process(paper: dict, year_pattern: str):
     }
 
 
-def papers(data_path: str, year_cutoff: int, year_pattern: str, ml_category: str = None):
+def papers(
+    data_path: str, year_cutoff: int, year_pattern: str, ml_category: str = None
+):
     with open(data_path, "r") as f:
         for paper in f:
             paper = _process(paper, year_pattern)

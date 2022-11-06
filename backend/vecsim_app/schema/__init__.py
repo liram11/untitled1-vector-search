@@ -1,1 +1,2 @@
+from .predict_categories import CategoriesPredictionRequest
 from .search import SimilarityRequest, UserTextSimilarityRequest

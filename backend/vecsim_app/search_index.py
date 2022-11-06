@@ -120,17 +120,18 @@ class SearchIndex:
         Returns:
             str: RediSearch tag query string.
         """
-        tag = ["("]
+        tag = []
         if years:
-            years = "|".join([self.escaper.escape(y) for y in years])
-            tag.append(f"(@year:{{{years}}})")
+            years = "{" + "|".join([self.escaper.escape(y) for y in years]) + "}"
+            tag.append(f"(@year:{years})")
+        # if categories:
+        #     categories = "{" + "|".join([self.escaper.escape(c) for c in categories]) + "}"
+        #     tag.append(f"(@categories:{years})")
         for cat in categories:
-            cat = self.escaper.escape(cat)
-            tag.append(f"(@category:{{{cat}}})")
-        tag.append(")")
-        # if no tags are selected
-        if len(tag) < 3:
-            tag = ["*"]
+            cat = "{" + self.escaper.escape(cat) + "}"
+            tag.append(f"(@categories:{cat})")
+        if tag:
+            tag = ["("] + tag + [")"]
         return "".join(tag)
 
     def vector_query(
@@ -138,11 +139,10 @@ class SearchIndex:
         categories: list,
         years: list,
         search_type: str = "KNN",
-        number_of_results: int = 20,
+        number_of_results: int = 10,
     ) -> Query:
         """
         Create a RediSearch query to perform hybrid vector and tag based searches.
-
 
         Args:
             categories (list): List of categories.
@@ -157,6 +157,7 @@ class SearchIndex:
         # Parse tags to create query
         tag_query = self.process_tags(categories, years)
         base_query = f"{tag_query}=>[{search_type} {number_of_results} @vector $vec_param AS vector_score]"
+        print(base_query)
         return (
             Query(base_query)
             .sort_by("vector_score")

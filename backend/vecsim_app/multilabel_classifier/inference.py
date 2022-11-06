@@ -3,7 +3,6 @@ from typing import List
 
 import numpy as np
 import torch
-from ..categories import CATEGORIES
 from transformers import AutoTokenizer, BertForSequenceClassification
 
 
@@ -47,13 +46,7 @@ def load_models(
     return model, tokenizer, mlb
 
 
-def predict_categories(
-    queries: List[str],
-    model, tokenizer, mlb,proba_threshold=0.45
-):
-
-    def flatten(l):
-        return [item for sublist in l for item in sublist]
+def predict_categories(queries: List[str], model, tokenizer, mlb, proba_threshold=0.45):
 
     categories = []
 
