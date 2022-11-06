@@ -13,7 +13,8 @@ import {
   Checkbox,
   Tooltip,
   Select,
-  SelectChangeEvent
+  SelectChangeEvent,
+  CircularProgress
 } from '@mui/material';
 
 
@@ -26,6 +27,7 @@ import { ensureArray, getArrayParam, parseURLSearchParams } from '../utils/query
 import { CATEGORY_FILTER_OPTIONS, YEAR_FILTER_OPTIONS } from '../constants/search_filter';
 import { useDebounce } from '../hooks/useDebounce';
 import { SuggestedCategories } from '../components/Search/SuggestedCategories';
+import { LoadingButton } from '../ui/LoadingButton';
 
 export const Home = () => {
   const [urlParams, setUrlParams] = useSearchParams();
@@ -69,17 +71,6 @@ export const Home = () => {
       searchStates
     })
   }, [years, categories, searchStates, setUrlParams])
-
-  useEffect(() => {
-    const years = ensureArray(parsed_params['years'] || [])
-    const categories = ensureArray(parsed_params['categories'] || [])
-    const searchStates = ensureArray(parsed_params['searchStates'] || [''])
-
-    setYears(years)
-    setCategories(categories)
-    setSearchStates(searchStates)
-  }, [parsed_params, setYears, setCategories, setSearchStates]);
-
 
   const handleYearSelection = (event: SelectChangeEvent<typeof years>) => {
     const {
@@ -189,7 +180,7 @@ export const Home = () => {
                     ))}
                   </Select>
                 </FormControl>
-                <FormControl sx={{ m: 0, width: 300, mt: 1 }}>
+                <FormControl sx={{ m: 0, width: '100%', mt: 1 }}>
                   <InputLabel id="demo-multiple-checkbox-label">Categories (exact match)</InputLabel>
                   <Select
                     labelId="demo-multiple-checkbox-label"
@@ -220,7 +211,7 @@ export const Home = () => {
               <AddItemButton text="Add another article" onClick={handleSearchItemAdd} />
 
               <div className="pt-4">
-                <Button variant="contained" size="large" onClick={queryPapers}>Search!</Button>
+                <LoadingButton loading={isLoadingPapers} onClick={queryPapers}> Search!</LoadingButton>
               </div>
 
               <SuggestedCategories
