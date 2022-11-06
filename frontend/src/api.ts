@@ -31,14 +31,14 @@ export const fetchFromBackend = async (url: string, method: string, body?: any) 
   return data;
 }
 
-export const getPapers = async (limit=15, skip=0, years: string[] = [], categories: string[] = []) => {
+export const getPapers = async (limit = 15, skip = 0, years: string[] = [], categories: string[] = []) => {
   var params: string;
-  if ( !years.length && !categories.length ) {
+  if (!years.length && !categories.length) {
     var params = `?limit=${limit}&skip=${skip}`
   } else {
-    if ( years.length && categories.length ) {
+    if (years.length && categories.length) {
       var params = `?limit=${limit}&skip=${skip}&years=${years.join()}&categories=${categories.join()}`
-    } else if ( years.length ) {
+    } else if (years.length) {
       var params = `?limit=${limit}&skip=${skip}&years=${years.join()}`
     } else {
       var params = `?limit=${limit}&skip=${skip}&categories=${categories.join()}`
@@ -50,11 +50,10 @@ export const getPapers = async (limit=15, skip=0, years: string[] = [], categori
 
 
 export const getSemanticallySimilarPapers = async (paper_id: string,
-                                                   years: string[],
-                                                   categories: string[],
-                                                   search='KNN',
-                                                   limit=15) => {
-  console.log(paper_id);
+  years: string[],
+  categories: string[],
+  search = 'KNN',
+  limit = 15) => {
   let body = {
     paper_id: paper_id,
     search_type: search,
@@ -69,12 +68,12 @@ export const getSemanticallySimilarPapers = async (paper_id: string,
 
 
 export const getSemanticallySimilarPapersbyText = async (searchItems: string[],
-                                                         years: string[],
-                                                         categories: string[],
-                                                         search='KNN',
-                                                         limit=15) => {
+  years: string[],
+  categories: string[],
+  search = 'KNN',
+  limit = 15) => {
   let body = {
-    articles: searchItems.map(text => ({text})),
+    articles: searchItems.map(text => ({ text })),
     search_type: search,
     number_of_results: limit,
     years: years,
@@ -83,4 +82,15 @@ export const getSemanticallySimilarPapersbyText = async (searchItems: string[],
 
   const url = MASTER_URL + "vectorsearch/text/user";
   return fetchFromBackend(url, 'POST', body);
+};
+
+
+export const getSuggestedCategories = async (
+  articles: string[]
+) => {
+  let body = { articles }
+
+  const url = MASTER_URL + "predict-categories"
+  const { categories } = await fetchFromBackend(url, 'POST', body)
+  return categories || []
 };

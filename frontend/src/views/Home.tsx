@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useImmer } from "use-immer";
-import { getPapers, getSemanticallySimilarPapersbyText } from '../api';
+import { getPapers, getSemanticallySimilarPapersbyText, getSuggestedCategories } from '../api';
 import { Card } from "./Card"
 
 import {
@@ -23,6 +23,8 @@ import { AddItemButton } from '../ui/AddItemButton';
 import { useSearchParams } from 'react-router-dom';
 import { ensureArray, getArrayParam, parseURLSearchParams } from '../utils/query_string';
 import { CATEGORY_FILTER_OPTIONS, YEAR_FILTER_OPTIONS } from '../constants/search_filter';
+import { useDebounce } from '../hooks/useDebounce';
+import { SuggestedCategories } from '../components/Search/SuggestedCategories';
 
 export const Home = () => {
   const [urlParams, setUrlParams] = useSearchParams();
@@ -37,6 +39,15 @@ export const Home = () => {
   const [error, setError] = useImmer<string>('');
   const [skip, setSkip] = useImmer(0);
   const [limit, setLimit] = useImmer(15);
+
+  const [suggestedCategories, setSuggestedCategories] = useImmer<string[]>([]);
+
+  const changeSuggestedCategories = async () => {
+    const newSuggestedCategories = await getSuggestedCategories(searchStates)
+
+    setSuggestedCategories(newSuggestedCategories)
+  }
+  const changeSuggestedCategoriesDebounced = useDebounce(changeSuggestedCategories, 800)
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -94,6 +105,8 @@ export const Home = () => {
     setSearchStates(searchStates => {
       searchStates[index] = newText
     })
+
+    changeSuggestedCategoriesDebounced()
   }
 
   const handleSearchItemAdd = () => {
@@ -129,6 +142,10 @@ export const Home = () => {
   useEffect(() => {
     queryPapers();
   }, []);
+
+  const applySuggestedCategories = () => {
+    setCategories(suggestedCategories)
+  }
 
   return (
     <>
@@ -167,7 +184,7 @@ export const Home = () => {
                   </Select>
                 </FormControl>
                 <FormControl sx={{ m: 0, width: 300, mt: 1 }}>
-                  <InputLabel id="demo-multiple-checkbox-label">Categories (all)</InputLabel>
+                  <InputLabel id="demo-multiple-checkbox-label">Categories (exact match)</InputLabel>
                   <Select
                     labelId="demo-multiple-checkbox-label"
                     id="demo-multiple-checkbox"
@@ -178,10 +195,10 @@ export const Home = () => {
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                   >
-                    {CATEGORY_FILTER_OPTIONS.map((cat) => (
-                      <MenuItem key={cat} value={cat}>
-                        <Checkbox checked={categories.indexOf(cat) > -1} />
-                        <ListItemText primary={cat} />
+                    {Object.entries(CATEGORY_FILTER_OPTIONS).map(([slug, name]) => (
+                      <MenuItem key={slug} value={slug}>
+                        <Checkbox checked={categories.indexOf(slug) > -1} />
+                        <ListItemText primary={`${slug} (${name})`} />
                       </MenuItem>
                     ))}
                   </Select>
@@ -199,6 +216,11 @@ export const Home = () => {
               <div className="pt-4">
                 <Button variant="contained" size="large" onClick={queryPapers}>Search!</Button>
               </div>
+
+              <SuggestedCategories
+                options={suggestedCategories}
+                onClick={applySuggestedCategories}
+              />
             </div>
 
           </div>
