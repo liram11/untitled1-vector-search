@@ -22,8 +22,7 @@ search_index = SearchIndex()
 STATE = {}
 
 mlc_path = f"{config.DATA_LOCATION}/multilabel_classifier/checkpoint"
-# TODO: load once the model is trained!
-# mlc_model, mlc_tokenizer, mlc_b = load_models(mlc_path, f"{mlc_path}/mlb.pkl")
+mlc_model, mlc_tokenizer, mlc_b = load_models(mlc_path, f"{mlc_path}/mlb.pkl")
 
 
 def _cut_off_category_description(c: str):
@@ -41,15 +40,12 @@ async def process_paper(p, i: int) -> t.Dict[str, t.Any]:
 
 async def papers_from_results(total, results) -> t.Dict[str, t.Any]:
     # extract papers from VSS results
-    results = [
-        await process_paper(p, i)
-        for i, p in enumerate(results.docs)
-    ]
-    dump = '\n'.join([f"{r['similarity_score']:.3f} {r['title']}" for r in results])
-    print(f'Retrieved {len(results)} papers:' + dump)
+    results = [await process_paper(p, i) for i, p in enumerate(results.docs)]
+    dump = "\n".join([f"{r['similarity_score']:.3f} {r['title']}" for r in results])
+    print(f"Retrieved {len(results)} papers:" + dump)
     return {
-        'total': total,
-        'papers': results,
+        "total": total,
+        "papers": results,
     }
 
 
@@ -85,23 +81,18 @@ async def get_papers(
 
 
 @r.post("/predict-categories", response_model=t.Dict)
-async def find_papers_by_text(categories_request: CategoriesPredictionRequest):
-    # TODO: once the model is ready, uncomment
-    categories = "cs.IT,cs.AI,math.IT,q-bio.PE".split(",")
-    # categories = predict_categories(
-    #     categories_request.articles,
-    #     mlc_model,
-    #     mlc_tokenizer,
-    #     mlc_b,
-    #     proba_threshold=categories_request.proba_threshold,
-    # )
+async def route_predict_categories(categories_request: CategoriesPredictionRequest):
+    categories = predict_categories(
+        categories_request.articles,
+        mlc_model,
+        mlc_tokenizer,
+        mlc_b,
+        proba_threshold=categories_request.proba_threshold,
+    )
     return {
         "categories": categories,
         "categories_names": [CATEGORIES.get(c) for c in categories],
     }
-
-    # Get Paper records of those results
-    return await papers_from_results(total.total, results)
 
 
 @r.post("/vectorsearch/text", response_model=t.Dict)
@@ -153,10 +144,10 @@ async def find_papers_by_user_text(similarity_request: UserTextSimilarityRequest
         years=similarity_request.years, categories=similarity_request.categories
     )
 
-    articles = [a['text'] for a in similarity_request.articles if a['text'].strip()]
+    articles = [a["text"] for a in similarity_request.articles if a["text"].strip()]
     article_embeddings = [embeddings.make(a) for a in articles]
     mid_embedding = sum(article_embeddings) / len(article_embeddings)
-    
+
     # debug:
     for ae in article_embeddings:
         print(ae[:5])
