@@ -1,6 +1,8 @@
+#!/bin/bash
+cd "$(dirname "$0")"  # cd to the script's directory
+
 git clone --branch dev2 git@github.com:liram11/untitled1-vector-search.git
 cd untitled1-vector-search/ && pwd
-
 
 ## FRONTEND
 
