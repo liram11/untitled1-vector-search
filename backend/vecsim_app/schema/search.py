@@ -7,6 +7,7 @@ class SimilarityRequest(BaseModel):
     years: list
     number_of_results: int = 10
     search_type: str = "KNN"
+    categories_operator: str = "AND"
 
 
 class UserTextSimilarityRequest(BaseModel):

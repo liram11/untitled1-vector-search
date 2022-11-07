@@ -41,8 +41,13 @@ async def process_paper(p, i: int) -> t.Dict[str, t.Any]:
 async def papers_from_results(total, results) -> t.Dict[str, t.Any]:
     # extract papers from VSS results
     results = [await process_paper(p, i) for i, p in enumerate(results.docs)]
-    dump = "\n".join([f"{r['similarity_score']:.3f} {r['title']}" for r in results])
-    print(f"Retrieved {len(results)} papers:" + dump)
+    dump = "\n".join(
+        [
+            f"  [{r['similarity_score']:.3f}] " + r['title'].replace('\n', ' ')
+            for r in results
+        ]
+    )
+    print(f"Retrieved {len(results)} papers:\n" + dump)
     return {
         "total": total,
         "papers": results,
@@ -106,6 +111,7 @@ async def find_papers_by_text(similarity_request: SimilarityRequest):
         similarity_request.years,
         similarity_request.search_type,
         similarity_request.number_of_results,
+        categories_operator=similarity_request.categories_operator,
     )
     count_query = search_index.count_query(
         years=similarity_request.years, categories=similarity_request.categories
@@ -145,6 +151,8 @@ async def find_papers_by_user_text(similarity_request: UserTextSimilarityRequest
     )
 
     articles = [a["text"] for a in similarity_request.articles if a["text"].strip()]
+    if not articles:
+        return {}
     article_embeddings = [embeddings.make(a) for a in articles]
     mid_embedding = sum(article_embeddings) / len(article_embeddings)
 
