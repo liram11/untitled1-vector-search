@@ -99,6 +99,7 @@ export const getSemanticallySimilarPapersbyText = async ({
     search_type: search,
     number_of_results: limit,
     years: years,
+    categories,
     categories_operator: matchExactCategories ? 'AND' : 'OR'
   }
 
