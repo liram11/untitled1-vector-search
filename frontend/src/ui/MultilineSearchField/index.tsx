@@ -25,10 +25,9 @@ export const MultilineSearchField = ({
   };
 
   return (
-    <Root>
+    <Root height={height}>
       <TextArea
         {...{
-          height,
           placeholder,
           onChange: handleTextChange
         }}
