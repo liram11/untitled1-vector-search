@@ -38,17 +38,11 @@ This model is deployed on the backend route `POST /predict-categories` and is ca
 
 For more details about the model technicalities, please go to [the detailed README](data/README.md).
 
-## How we used Saturn Cloud
-TBD (Artem)
-
-## How we used Redis
-TBD (artem)
-
 ___
 
 Here we showcase Redis vector similarity search (VSS) applied to a document search/retrieval use case.
 
-![Screen Shot 2022-09-20 at 12 20 16 PM](https://user-images.githubusercontent.com/13009163/191346916-4b8f648f-7552-4910-ad4e-9cc117230f00.png)
+![demo website screenshot](backend/vecsim_app/data/untitled1-demo.png)
 
 
 ## Getting Started
