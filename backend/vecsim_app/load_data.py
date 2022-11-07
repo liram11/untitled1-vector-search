@@ -12,7 +12,7 @@ from vecsim_app.search_index import SearchIndex
 
 
 def read_paper_df() -> t.List:
-    path = config.DATA_LOCATION + "/embeddings/arxiv_embeddings_10000.pkl"
+    path = config.DATA_LOCATION + "/embeddings/arxiv_embeddings_400000.pkl"
     print(f"Loading data from   : {path}")
     with open(path, "rb") as f:
         df = pickle.load(f)
