@@ -4,18 +4,8 @@ import { getPapers, getSemanticallySimilarPapersbyText, getSuggestedCategories }
 import { Card } from "./Card"
 
 import {
-  OutlinedInput,
-  InputLabel,
-  MenuItem,
-  FormControl,
-  ListItemText,
-  Button,
-  Checkbox,
   Tooltip,
-  Select,
   SelectChangeEvent,
-  CircularProgress,
-  Link
 } from '@mui/material';
 
 
@@ -24,8 +14,7 @@ import { Search } from '../components/Search';
 import { AddItemButton } from '../ui/AddItemButton';
 
 import { useSearchParams } from 'react-router-dom';
-import { ensureArray, getArrayParam, parseURLSearchParams } from '../utils/query_string';
-import { CATEGORY_HUMAN_NAMES, YEAR_FILTER_OPTIONS } from '../constants/search_filter';
+import { getArrayParam, parseURLSearchParams } from '../utils/query_string';
 import { useDebounce } from '../hooks/useDebounce';
 import { SuggestedCategories } from '../components/SuggestedCategories';
 import { LoadingButton } from '../ui/LoadingButton';
@@ -45,9 +34,9 @@ export const Home = () => {
   const [years, setYears] = useImmer<string[]>(getArrayParam(parsed_params, 'years', []));
   const [searchStates, setSearchStates] = useImmer<SearchStates>(getArrayParam(parsed_params, 'searchStates', ['']));
   const [total, setTotal] = useImmer<number>(0);
-  const [error, setError] = useImmer<string>('');
+  const [_error, setError] = useImmer<string>('');
   const [skip, setSkip] = useImmer(0);
-  const [limit, setLimit] = useImmer(15);
+  const [limit, _setLimit] = useImmer(15);
 
   const changeSuggestedCategories = async () => {
     const newSuggestedCategories = await getSuggestedCategories(searchStates)
@@ -55,6 +44,32 @@ export const Home = () => {
     setSuggestedCategories(newSuggestedCategories)
   }
   const changeSuggestedCategoriesDebounced = useDebounce(changeSuggestedCategories, 800)
+
+  const queryPapers = async () => {
+    setIsLoadingPapers(true)
+    try {
+      if (searchStates) {
+        const result = await getSemanticallySimilarPapersbyText({ searchItems: searchStates, years, categories })
+        setPapers(result.papers)
+        setTotal(result.total)
+      } else {
+        setSkip(skip + limit);
+        const result = await getPapers(limit, skip, years, categories);
+        setPapers(result.papers)
+        setTotal(result.total)
+      }
+    } catch (err) {
+      setError(String(err));
+    } finally {
+      setIsLoadingPapers(false)
+    }
+  };
+
+  // Execute this one when the component loads up
+  useEffect(() => {
+    queryPapers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setUrlParams({
@@ -105,32 +120,6 @@ export const Home = () => {
       searchStates.splice(index, 1)
     })
   }
-
-  const queryPapers = async () => {
-    setIsLoadingPapers(true)
-    try {
-      if (searchStates) {
-        const result = await getSemanticallySimilarPapersbyText({ searchItems: searchStates, years, categories })
-        setPapers(result.papers)
-        setTotal(result.total)
-      } else {
-        setSkip(skip + limit);
-        const result = await getPapers(limit, skip, years, categories);
-        setPapers(result.papers)
-        setTotal(result.total)
-      }
-    } catch (err) {
-      setError(String(err));
-    } finally {
-      setIsLoadingPapers(false)
-    }
-  };
-
-  // Execute this one when the component loads up
-  useEffect(() => {
-    queryPapers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const applySuggestedCategories = () => {
     const mergedCategories = new Set([...categories, ...suggestedCategories])

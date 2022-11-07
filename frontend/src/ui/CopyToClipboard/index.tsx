@@ -1,4 +1,4 @@
-import { Button, Snackbar, Link } from '@mui/material'
+import { Snackbar, Link } from '@mui/material'
 import ShareIcon from '@mui/icons-material/Share';
 import { useState } from 'react'
 import { Root } from './styles';
