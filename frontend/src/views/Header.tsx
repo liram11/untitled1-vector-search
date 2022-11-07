@@ -32,7 +32,7 @@ export const Header = (props: Props) => {
                 paddingRight: '10px',
                 }}>
             </img>
-          Redis Vector Search Demo
+          Untitled1.ipynb Redis Vector Search
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll" style={{top: "5px"}}>
