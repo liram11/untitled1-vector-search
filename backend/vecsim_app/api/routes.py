@@ -145,6 +145,8 @@ async def find_papers_by_user_text(similarity_request: UserTextSimilarityRequest
     )
 
     articles = [a["text"] for a in similarity_request.articles if a["text"].strip()]
+    if not articles:
+        return {}
     article_embeddings = [embeddings.make(a) for a in articles]
     mid_embedding = sum(article_embeddings) / len(article_embeddings)
 
