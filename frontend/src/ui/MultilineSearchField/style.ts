@@ -1,16 +1,25 @@
 import styled from 'styled-components'
 
 
-export const Root = styled.div`
-  position: relative;
-  padding-top: 20px;
-`
-
 interface Props {
   height?: number
 }
 
-export const TextArea = styled.textarea<Props>`
+export const Root = styled.div<Props>`
+  position: relative;
+  margin-top: 20px;
+
+  border-radius: 4px;
+  padding: 12px 40px 12px 16px;
+
+  width: 100%;
+  height: ${({height = 80}) => height}px;
+
+  box-shadow: rgb(0 0 0 / 20%) 0px 2px 6px 0px, rgb(0 0 0 / 14%) 0px 1px 1px 0px, rgb(0 0 0 / 12%) 0px 1px 3px 0px;
+`
+
+
+export const TextArea = styled.textarea`
   border: none;
   overflow: auto;
   outline: none;
@@ -18,12 +27,7 @@ export const TextArea = styled.textarea<Props>`
   resize: none;
 
   width: 100%;
-  height: ${({height = 80}) => height}px;
-  border-radius: 4px;
-  padding: 12px 40px 12px 16px;
-
-
-  box-shadow: rgb(0 0 0 / 20%) 0px 2px 6px 0px, rgb(0 0 0 / 14%) 0px 1px 1px 0px, rgb(0 0 0 / 12%) 0px 1px 3px 0px;
+  height: 100%;
 
   &::placeholder {
     color: #aaa;
