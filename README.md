@@ -8,9 +8,9 @@
     <br />
     <br />
 <div display="inline-block">
-    <a href="https://untitled1-vector-search.community.saturnenterprise.io/"><mark><b>Hosted Demo</b></mark></a>&nbsp;&nbsp;&nbsp;
-    <a href="https://github.com/liram11/untitled1-vector-search"><mark><b>Code</b></mark></a>&nbsp;&nbsp;&nbsp;
-    <a href="TBD"><mark><b>Blog Post</b></mark></a>&nbsp;&nbsp;&nbsp;
+    <mark><a href="https://untitled1-vector-search.community.saturnenterprise.io/"><b>Hosted Demo</b></a>&nbsp;&nbsp;&nbsp; </mark>
+    <mark><a href="https://github.com/liram11/untitled1-vector-search"><b>Code</b></a>&nbsp;&nbsp;&nbsp; </mark>
+    <mark><a href="TBD"><b>Blog Post</b></a>&nbsp;&nbsp;&nbsp; </mark>
     <a href="https://redis.io/docs/stack/search/reference/vectors/"><b>Redis VSS Documentation</b></a>&nbsp;&nbsp;&nbsp;
   </div>
     <br />
