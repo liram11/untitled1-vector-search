@@ -28,6 +28,7 @@ import { CATEGORY_HUMAN_NAMES, YEAR_FILTER_OPTIONS } from '../constants/search_f
 import { useDebounce } from '../hooks/useDebounce';
 import { SuggestedCategories } from '../components/SuggestedCategories';
 import { LoadingButton } from '../ui/LoadingButton';
+import { SearchFilters } from '../components/SearchFilters';
 
 export const Home = () => {
   const [urlParams, setUrlParams] = useSearchParams();
@@ -37,6 +38,8 @@ export const Home = () => {
   const [papers, setPapers] = useImmer<any[]>([]);
   const [isLoadingPapers, setIsLoadingPapers] = useImmer<boolean>(false);
   const [categories, setCategories] = useImmer<string[]>(getArrayParam(parsed_params, 'categories', []));
+  const [suggestedCategories, setSuggestedCategories] = useImmer<string[]>([]);
+  const [matchExactCategories, setMatchExactCategories] = useImmer<boolean>(false)
   const [years, setYears] = useImmer<string[]>(getArrayParam(parsed_params, 'years', []));
   const [searchStates, setSearchStates] = useImmer<SearchStates>(getArrayParam(parsed_params, 'searchStates', ['']));
   const [total, setTotal] = useImmer<number>(0);
@@ -44,25 +47,12 @@ export const Home = () => {
   const [skip, setSkip] = useImmer(0);
   const [limit, setLimit] = useImmer(15);
 
-  const [suggestedCategories, setSuggestedCategories] = useImmer<string[]>([]);
-
   const changeSuggestedCategories = async () => {
     const newSuggestedCategories = await getSuggestedCategories(searchStates)
 
     setSuggestedCategories(newSuggestedCategories)
   }
   const changeSuggestedCategoriesDebounced = useDebounce(changeSuggestedCategories, 800)
-
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 150,
-      },
-    },
-  };
 
   useEffect(() => {
     setUrlParams({
@@ -83,7 +73,7 @@ export const Home = () => {
     setSkip(0)
   };
 
-  const handleCatSelection = (event: SelectChangeEvent<typeof categories>) => {
+  const handleCategorySelection = (event: SelectChangeEvent<typeof categories>) => {
     const {
       target: { value },
     } = event;
@@ -118,7 +108,7 @@ export const Home = () => {
     setIsLoadingPapers(true)
     try {
       if (searchStates) {
-        const result = await getSemanticallySimilarPapersbyText(searchStates, years, categories)
+        const result = await getSemanticallySimilarPapersbyText({searchItems: searchStates, years, categories})
         setPapers(result.papers)
         setTotal(result.total)
       } else {
@@ -146,6 +136,10 @@ export const Home = () => {
     setCategories(Array.from(mergedCategories))
   }
 
+  const handleMatchExactCategoriesChange = () => {
+    setMatchExactCategories((el) => !el)
+  }
+
   return (
     <>
       <main role="main">
@@ -161,53 +155,24 @@ export const Home = () => {
               <strong>Enter a search query below to discover scholarly papers hosted by <a href="https://arxiv.org/" target="_blank" rel="noreferrer">arXiv</a> (Cornell University).</strong>
             </p>
             <div className="container pb-4">
-              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                <FormControl sx={{ width: 150, mr: 1, mt: 1 }}>
-                  <InputLabel id="demo-multiple-checkbox-label">Year (either)</InputLabel>
-                  <Select
-                    labelId="demo-multiple-checkbox-label"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={years}
-                    onChange={handleYearSelection}
-                    input={<OutlinedInput label="Tag" />}
-                    renderValue={(selected) => selected.join(', ')}
-                    MenuProps={MenuProps}
-                  >
-                    {YEAR_FILTER_OPTIONS.map((year) => (
-                      <MenuItem key={year} value={year}>
-                        <Checkbox checked={years.indexOf(year) > -1} />
-                        <ListItemText primary={year} />
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <FormControl sx={{ m: 0, flex: 1, minWidth: 300, mt: 1 }}>
-                  <InputLabel id="demo-multiple-checkbox-label">Categories (exact match)</InputLabel>
-                  <Select
-                    labelId="demo-multiple-checkbox-label"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={categories}
-                    onChange={handleCatSelection}
-                    input={<OutlinedInput label="Category" />}
-                    renderValue={(selected) => selected.join(', ')}
-                    MenuProps={MenuProps}
-                  >
-                    {Object.entries(CATEGORY_HUMAN_NAMES).map(([slug, name]) => (
-                      <MenuItem key={slug} value={slug}>
-                        <Checkbox checked={categories.indexOf(slug) > -1} />
-                        <ListItemText primary={`${slug} (${name})`} />
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </div>
+
+              <SearchFilters
+                {...{
+                  years,
+                  onYearSelection: handleYearSelection,
+                  categories,
+                  onCategorySelection: handleCategorySelection,
+                  matchExactCategories,
+                  onMatchExactCategoriesChange: handleMatchExactCategoriesChange
+                }}
+              />
 
               <Search
-                searchStates={searchStates}
-                onSearchStateChange={handleSearchChange}
-                onSearchItemRemove={handleSearchItemRemove}
+                {...{
+                  searchStates,
+                  onSearchStateChange: handleSearchChange,
+                  onSearchItemRemove: handleSearchItemRemove,
+                }}
               />
 
               <AddItemButton text="Add another article" onClick={handleSearchItemAdd} />
@@ -237,18 +202,21 @@ export const Home = () => {
               <div className="row">
                 {papers.map((paper) => (
                   <Card
-                    key={paper.pk}
-                    title={paper.title}
-                    authors={paper.authors}
-                    paperId={paper.paper_id}
-                    numPapers={15}
-                    paperCat={paper.categories}
-                    paperYear={paper.year}
-                    categories={categories}
-                    years={years}
-                    similarity_score={paper.similarity_score}
-                    setState={setPapers}
-                    setTotal={setTotal}
+                    {...{
+                      key: paper.pk,
+                      title: paper.title,
+                      authors: paper.authors,
+                      paperId: paper.paper_id,
+                      numPapers: 15,
+                      paperCat: paper.categories,
+                      paperYear: paper.year,
+                      categories,
+                      years,
+                      similarity_score: paper.similarity_score,
+                      setState: setPapers,
+                      setTotal,
+                      matchExactCategories,
+                    }}
                   />
                 ))}
               </div>

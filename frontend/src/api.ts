@@ -49,35 +49,57 @@ export const getPapers = async (limit = 15, skip = 0, years: string[] = [], cate
 // get papers from Redis through the FastAPI backend
 
 
-export const getSemanticallySimilarPapers = async (paper_id: string,
-  years: string[],
-  categories: string[],
+interface PaperSearchRequest {
+  years: string[];
+  categories: string[];
+  search?: 'KNN' | 'ANN'
+  limit?: number;
+  matchExactCategories?: boolean;
+}
+
+interface SimilarPaperSearchRequest extends PaperSearchRequest {
+  paper_id: string;
+}
+
+export const getSemanticallySimilarPapers = async ({
+  paper_id,
+  years,
+  categories,
   search = 'KNN',
-  limit = 15) => {
+  limit = 15,
+  matchExactCategories = false
+}: SimilarPaperSearchRequest) => {
   let body = {
     paper_id: paper_id,
     search_type: search,
     number_of_results: limit,
     years: years,
-    categories: categories
+    categories: categories,
+    categories_operator: matchExactCategories ? 'AND' : 'OR'
   }
 
   const url = MASTER_URL + "vectorsearch/text";
   return fetchFromBackend(url, 'POST', body);
 };
 
+interface TextPaperSearchRequest extends PaperSearchRequest {
+  searchItems: string[],
+}
 
-export const getSemanticallySimilarPapersbyText = async (searchItems: string[],
-  years: string[],
-  categories: string[],
+export const getSemanticallySimilarPapersbyText = async ({
+  searchItems,
+  years,
+  categories,
   search = 'KNN',
-  limit = 15) => {
+  limit = 15,
+  matchExactCategories = false
+}: TextPaperSearchRequest) => {
   let body = {
     articles: searchItems.map(text => ({ text })),
     search_type: search,
     number_of_results: limit,
     years: years,
-    categories: categories
+    categories_operator: matchExactCategories ? 'AND' : 'OR'
   }
 
   const url = MASTER_URL + "vectorsearch/text/user";
