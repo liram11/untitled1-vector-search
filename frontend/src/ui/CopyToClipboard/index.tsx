@@ -15,7 +15,7 @@ const CopyToClipboardButton = () => {
   return (
     <>
       <Root onClick={handleClick}>
-        <Link style={{paddingRight: '8px'}} component="button" underline="always">Share query </Link>
+        <Link style={{paddingRight: '8px'}} component="button" underline="always">Share results </Link>
         <ShareIcon />
       </Root>
 
