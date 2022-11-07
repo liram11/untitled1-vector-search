@@ -21,7 +21,6 @@ We found that this gave more realistic results, at least for our use case.
 
 2. **Enabled Redis search query to join categories with "AND" in addition to "OR" operator**. Thus, one can now define only the paper categories they're interested in and search for the papers that include all these categories, not just one. See [git blame](https://github.com/liram11/untitled1-vector-search/blame/2f26a01bb41cc86d95ef424f07cea39c8b97b27f/backend/vecsim_app/search_index.py#L130-L132).
 
-
 3. **Enabled multi-input vector search**. We decided that some it might be useful for a scientist to know what are the papers "in between" the papers *A*, *B* and *C*. For that, we extended our Web UI to accept multiple article abstracts as input (along with a single set of "years" and "categories" configuration), we encode each abstract as a vector and then find the *mean* vector of these vectors. In case of two input papers, this is the middle of the line segment between two coordinates. In case of three papers, this is a centroid of a triangle of three coordinates. Thus, searching similar articles within the sphere around these points of interests can bring some interesting results (for example, it can help find multi-disciplinary papers related to the given papers).
 
 4. **Implemented auto-detection of the categories**. We thought that it's a difficult work to assign the one of >150 categories manually and we trained and deployed a multi-label classification model that predicts categories for given text inputs. Our model performs relatively well: 
@@ -33,16 +32,17 @@ We found that this gave more realistic results, at least for our use case.
 
 This model is deployed on the backend route `POST /predict-categories` and is called by the frontend in order to auto-select the dropdown checkbox of the category selection for all user input texts. In the backend route, we can select the threshold for displaying the categories, but we pre-selected a value empirically.
 
-5. TBD (guys)
+For more details about the model technicalities, please go to [the detailed README](data/README.md).
 
+## How we used Saturn Cloud
+TBD (Artem)
 
 ## How we used Redis
 TBD (artem)
 
 ___
 
-Here we showcase Redis vector similarity search (VSS) applied to a document search/retrieval use case. Read more about AI-powered search in [our blog post](https://datasciencedojo.com/blog/ai-powered-document-search/) (shout out to our friends at Data Science Dojo).
-
+Here we showcase Redis vector similarity search (VSS) applied to a document search/retrieval use case.
 
 ![Screen Shot 2022-09-20 at 12 20 16 PM](https://user-images.githubusercontent.com/13009163/191346916-4b8f648f-7552-4910-ad4e-9cc117230f00.png)
 
