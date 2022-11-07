@@ -1,5 +1,6 @@
 #/bin/bash
 set -x
+cd untitled1-vector-search/ && pwd
 
 # ***
 echo "Building FRONTEND..."
@@ -32,7 +33,7 @@ cp -r ../frontend/build vecsim_app/templates/build
 python --version
 export PYTHONUNBUFFERED=1
 export PYTHONDONTWRITEBYTECODE=1
-pip install .
+pip install -e .
 
 
 # ***
