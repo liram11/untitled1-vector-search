@@ -38,14 +38,16 @@ pip install -e .
 
 # ***
 echo "Downloading MODELS..."
+cd ../.. ** pwd
+
 curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-408.0.1-linux-x86_64.tar.gz
 tar -xf google-cloud-cli-408.0.1-linux-x86_64.tar.gz
 chmod +x ./google-cloud-sdk/install.sh
 yes | ./google-cloud-sdk/install.sh
 export PATH=$PATH:$(pwd)/google-cloud-sdk/bin/
 
+cd untitled1-vector-search/ && pwd
 export BUCKET_URI="gs://untitled1-vector-search/master"
-
 for path in data/multilabel_classifier/checkpoint/ data/embeddings/; do
     mkdir -p $path
     time gsutil -m rsync -r $BUCKET_URI/$path $path
