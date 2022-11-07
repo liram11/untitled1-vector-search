@@ -9,7 +9,6 @@
     <br />
 <div display="inline-block">
     <a href="https://untitled1-vector-search.community.saturnenterprise.io/"><b>🟠Hosted Demo</b></a>&nbsp;&nbsp;&nbsp;
-    <a href="https://github.com/liram11/untitled1-vector-search"><b>🟠Code</b></a>&nbsp;&nbsp;&nbsp;
     <a href="TBD"><b>🟠Blog Post</b></a>&nbsp;&nbsp;&nbsp;
     <a href="https://redis.io/docs/stack/search/reference/vectors/"><b>Redis VSS Documentation</b></a>&nbsp;&nbsp;&nbsp;
   </div>
