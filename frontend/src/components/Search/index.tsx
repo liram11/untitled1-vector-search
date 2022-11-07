@@ -1,7 +1,7 @@
 
 import { OnSearchItemRemove, OnSearchStateChange, SearchStates } from "../../types/search";
 
-import { SearchBar } from './SearchBar'
+import { SearchBar } from '../../ui/SearchBar'
 
 interface Props {
   searchStates: SearchStates

@@ -1,9 +1,9 @@
 
-import Bar from "material-ui-search-bar";
-import ClearIcon from "@material-ui/icons/Clear";
-import grey from '@material-ui/core/colors/grey';
-import { OnSearchItemRemove, OnSearchStateChange } from "../../../types/search";
-import { MultilineSearchField } from "../../../ui/MultilineSearchField";
+// import Bar from "material-ui-search-bar";
+// import ClearIcon from "@material-ui/icons/Clear";
+// import grey from '@material-ui/core/colors/grey';
+import { OnSearchItemRemove, OnSearchStateChange } from "../../types/search";
+import { MultilineSearchField } from "../MultilineSearchField";
 
 interface Props {
   index: number;
