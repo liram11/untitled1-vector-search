@@ -32,6 +32,7 @@ cp -r ../frontend/build vecsim_app/templates/build
 python --version
 export PYTHONUNBUFFERED=1
 export PYTHONDONTWRITEBYTECODE=1
+pip install .
 
 
 # ***
