@@ -1,21 +1,46 @@
 import { ClearButton, Root, TextArea } from "./style"
 import ClearIcon from "@material-ui/icons/Clear";
+import { ReactElement } from "react";
 
+interface Props {
+  value: string
+  placeholder: string
+  height?: number
+  onChange: any
+  onCancelSearch: any
+  isCancelEnabled: boolean
+}
 
+export const MultilineSearchField = ({
+  value,
+  placeholder,
+  height = 200,
+  onChange,
+  onCancelSearch,
+  isCancelEnabled
+}: Props) => {
 
-export const MultilineSearchField = () => {
+  const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange(event.target.value)
+  };
 
   return (
     <Root>
       <TextArea
-        height={200}
-        placeholder="Enter paper's title, abstract or any other text related to this paper"
+        {...{
+          height,
+          placeholder,
+          onChange: handleTextChange
+        }}
       >
-        asdasd
+        {value}
       </TextArea>
-      <ClearButton>
-        <ClearIcon />
-      </ClearButton>
+      {isCancelEnabled
+        &&
+        <ClearButton onClick={onCancelSearch}>
+          <ClearIcon />
+        </ClearButton>
+      }
     </Root>
   )
 }

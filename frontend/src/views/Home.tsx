@@ -175,7 +175,7 @@ export const Home = () => {
                 }}
               />
 
-              <AddItemButton text="Add another article" onClick={handleSearchItemAdd} />
+              <AddItemButton text="Add another paper" onClick={handleSearchItemAdd} />
 
               <div className="pt-4">
                 <LoadingButton loading={isLoadingPapers} onClick={queryPapers}> Search!</LoadingButton>
