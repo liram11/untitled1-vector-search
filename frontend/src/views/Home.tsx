@@ -20,6 +20,7 @@ import { SuggestedCategories } from '../components/SuggestedCategories';
 import { LoadingButton } from '../ui/LoadingButton';
 import { SearchFilters } from '../components/SearchFilters';
 import CopyToClipboardButton from '../ui/CopyToClipboard';
+import { CATEGORY_HUMAN_NAMES } from '../constants/search_filter';
 
 export const Home = () => {
   const [urlParams, setUrlParams] = useSearchParams();
@@ -173,7 +174,7 @@ export const Home = () => {
               </div>
 
               <SuggestedCategories
-                options={suggestedCategories}
+                options={suggestedCategories.map((slug) => `${slug} (${CATEGORY_HUMAN_NAMES[slug as keyof typeof CATEGORY_HUMAN_NAMES]})`)}
                 onClick={applySuggestedCategories}
               />
             </div>
@@ -189,7 +190,7 @@ export const Home = () => {
                 </Tooltip>
               </p>
               <div>
-                <CopyToClipboardButton/>
+                <CopyToClipboardButton />
               </div>
             </div>
 
