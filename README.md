@@ -4,6 +4,7 @@
 
 <div align="center">
     <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/fin-readme/backend/vecsim_app/data/redis-logo.png?raw=true" width="20%"><img></a>
+    +
     <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/fin-readme/backend/vecsim_app/data/saturn.jpg?raw=true" width="20%"><img></a>
     <br />
     <br />
