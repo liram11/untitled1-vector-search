@@ -1,7 +1,7 @@
 
 <div align="center">
-    <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/main/backend/vecsim_app/data/redis-logo.png?raw=true" width="30%"><img></a>
-    <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/fin-readme/backend/vecsim_app/data/untitled.png?raw=true" width="10%"><img></a>
+    <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/fin-readme/backend/vecsim_app/data/redis-logo.png?raw=true" width="20%"><img></a>
+    <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/fin-readme/backend/vecsim_app/data/untitled.png?raw=true" width="50%"><img></a>
     <br />
     <br />
 <div display="inline-block">
