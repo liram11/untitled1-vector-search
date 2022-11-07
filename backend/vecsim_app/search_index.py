@@ -108,7 +108,9 @@ class SearchIndex:
             definition=IndexDefinition(prefix=[prefix], index_type=IndexType.HASH),
         )
 
-    def process_tags(self, categories: list, years: list) -> str:
+    def process_tags(
+        self, categories: list, years: list, categories_operator="AND"
+    ) -> str:
         """
         Helper function to process tags data. TODO - factor this
         out so it's agnostic to the name of the field.
@@ -124,14 +126,23 @@ class SearchIndex:
         if years:
             years = "{" + "|".join([self.escaper.escape(y) for y in years]) + "}"
             tag.append(f"(@year:{years})")
-        # if categories:
-        #     categories = "{" + "|".join([self.escaper.escape(c) for c in categories]) + "}"
-        #     tag.append(f"(@categories:{years})")
-        for cat in categories:
-            cat = "{" + self.escaper.escape(cat) + "}"
-            tag.append(f"(@categories:{cat})")
+
+        if categories:
+            if categories_operator == "AND":
+                for c in categories:
+                    cat = "{" + self.escaper.escape(c) + "}"
+                    tag.append(f"(@categories:{cat})")
+            elif categories_operator == "OR":
+                cat = "{" + "|".join([self.escaper.escape(c) for c in categories]) + "}"
+                tag.append(f"(@categories:{cat})")
+            else:
+                raise ValueError(f"Unsupported categories_operator: {categories_operator}")
+
         if tag:
             tag = ["("] + tag + [")"]
+        else:
+            tag = ["*"]
+
         return "".join(tag)
 
     def vector_query(
@@ -140,6 +151,7 @@ class SearchIndex:
         years: list,
         search_type: str = "KNN",
         number_of_results: int = 10,
+        categories_operator: str = "AND",
     ) -> Query:
         """
         Create a RediSearch query to perform hybrid vector and tag based searches.
@@ -155,9 +167,9 @@ class SearchIndex:
 
         """
         # Parse tags to create query
-        tag_query = self.process_tags(categories, years)
+        tag_query = self.process_tags(categories, years, categories_operator)
         base_query = f"{tag_query}=>[{search_type} {number_of_results} @vector $vec_param AS vector_score]"
-        print(base_query)
+        print(f"base_query: {base_query}")
         return (
             Query(base_query)
             .sort_by("vector_score")
@@ -179,4 +191,5 @@ class SearchIndex:
         """
         # Parse tags to create query
         tag_query = self.process_tags(categories, years)
+        print(f"tag_query: {tag_query}")
         return Query(f"{tag_query}").no_content().dialect(2)
