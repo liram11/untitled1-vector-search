@@ -4,14 +4,13 @@
 
 <div align="center">
     <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/fin-readme/backend/vecsim_app/data/redis-logo.png?raw=true" width="20%"><img></a>
-    +
     <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/fin-readme/backend/vecsim_app/data/saturn.jpg?raw=true" width="20%"><img></a>
     <br />
     <br />
 <div display="inline-block">
-    <mark><a href="https://untitled1-vector-search.community.saturnenterprise.io/"><b>Hosted Demo</b></a>&nbsp;&nbsp;&nbsp; </mark>
-    <mark><a href="https://github.com/liram11/untitled1-vector-search"><b>Code</b></a>&nbsp;&nbsp;&nbsp; </mark>
-    <mark><a href="TBD"><b>Blog Post</b></a>&nbsp;&nbsp;&nbsp; </mark>
+    <a href="https://untitled1-vector-search.community.saturnenterprise.io/" style="color:#E6CC00;"><b>Hosted Demo</b></a>&nbsp;&nbsp;&nbsp;
+    <a href="https://github.com/liram11/untitled1-vector-search" style="color:#E6CC00;"><b>Code</b></a>&nbsp;&nbsp;&nbsp;
+    <a href="TBD" style="color:#E6CC00;"><b>Blog Post</b></a>&nbsp;&nbsp;&nbsp;
     <a href="https://redis.io/docs/stack/search/reference/vectors/"><b>Redis VSS Documentation</b></a>&nbsp;&nbsp;&nbsp;
   </div>
     <br />
