@@ -1,12 +1,16 @@
+<div align="right">
+  <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/master/backend/vecsim_app/data/untitled.png?raw=true" width="40%"><img></a>
+</div>
 
 <div align="center">
-    <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/RedisVentures/redis-arXiv-search/blob/main/backend/vecsim_app/data/redis-logo.png?raw=true" width="30%"><img></a>
+    <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/master/backend/vecsim_app/data/redis-logo.png?raw=true" width="20%"><img></a>
+    <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/master/backend/vecsim_app/data/saturn.jpg?raw=true" width="20%"><img></a>
     <br />
     <br />
 <div display="inline-block">
-    <a href="https://docsearch.redisventures.com"><b>Hosted Demo</b></a>&nbsp;&nbsp;&nbsp;
-    <a href="https://github.com/RedisVentures/redis-arXiv-search"><b>Code</b></a>&nbsp;&nbsp;&nbsp;
-    <a href="https://datasciencedojo.com/blog/ai-powered-document-search/"><b>Blog Post</b></a>&nbsp;&nbsp;&nbsp;
+    <a href="https://untitled1-vector-search.community.saturnenterprise.io/"><b>Hosted Demo 🤩</b></a>&nbsp;&nbsp;&nbsp;
+    <a href="https://github.com/liram11/untitled1-vector-search"><b>Code 💾</b></a>&nbsp;&nbsp;&nbsp;
+    <a href="TBD"><b>Blog Post 🤓</b></a>&nbsp;&nbsp;&nbsp;
     <a href="https://redis.io/docs/stack/search/reference/vectors/"><b>Redis VSS Documentation</b></a>&nbsp;&nbsp;&nbsp;
   </div>
     <br />
@@ -14,7 +18,7 @@
 </div>
 
 ## Changes to the baseline solution
-Original repo: https://github.com/RedisVentures/redis-arXiv-search
+> Original repo: https://github.com/RedisVentures/redis-arXiv-search
 
 1. **Improved paper embeddings**: changed model to [sentence-transformers/all-distilroberta-v1](https://www.sbert.net/docs/pretrained_models.html)
 We found that this gave more realistic results, at least for our use case.
@@ -34,17 +38,11 @@ This model is deployed on the backend route `POST /predict-categories` and is ca
 
 For more details about the model technicalities, please go to [the detailed README](data/README.md).
 
-## How we used Saturn Cloud
-TBD (Artem)
-
-## How we used Redis
-TBD (artem)
-
 ___
 
 Here we showcase Redis vector similarity search (VSS) applied to a document search/retrieval use case.
 
-![Screen Shot 2022-09-20 at 12 20 16 PM](https://user-images.githubusercontent.com/13009163/191346916-4b8f648f-7552-4910-ad4e-9cc117230f00.png)
+![demo website screenshot](backend/vecsim_app/data/untitled1-demo.png)
 
 
 ## Getting Started
