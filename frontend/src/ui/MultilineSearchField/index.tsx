@@ -1,4 +1,4 @@
-import { ClearButton, Root, TextArea } from "./style"
+import { ClearButton, Root, TextArea } from "./styles"
 import ClearIcon from "@material-ui/icons/Clear";
 import { ReactElement } from "react";
 

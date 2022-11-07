@@ -14,7 +14,8 @@ import {
   Tooltip,
   Select,
   SelectChangeEvent,
-  CircularProgress
+  CircularProgress,
+  Link
 } from '@mui/material';
 
 
@@ -29,6 +30,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import { SuggestedCategories } from '../components/SuggestedCategories';
 import { LoadingButton } from '../ui/LoadingButton';
 import { SearchFilters } from '../components/SearchFilters';
+import CopyToClipboardButton from '../ui/CopyToClipboard';
 
 export const Home = () => {
   const [urlParams, setUrlParams] = useSearchParams();
@@ -108,7 +110,7 @@ export const Home = () => {
     setIsLoadingPapers(true)
     try {
       if (searchStates) {
-        const result = await getSemanticallySimilarPapersbyText({searchItems: searchStates, years, categories})
+        const result = await getSemanticallySimilarPapersbyText({ searchItems: searchStates, years, categories })
         setPapers(result.papers)
         setTotal(result.total)
       } else {
@@ -191,11 +193,17 @@ export const Home = () => {
         </section>
         <div className="album py-5 bg-light">
           <div className="container">
-            <p style={{ fontSize: 15 }}>
-              <Tooltip title="Filtered paper count" arrow>
-                <em>{total} searchable arXiv papers</em>
-              </Tooltip>
-            </p>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <p style={{ fontSize: 15 }}>
+                <Tooltip title="Filtered paper count" arrow>
+                  <em>{total} searchable arXiv papers</em>
+                </Tooltip>
+              </p>
+              <div>
+                <CopyToClipboardButton/>
+              </div>
+            </div>
+
           </div>
           <div className="container">
             {papers && (
