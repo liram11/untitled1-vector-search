@@ -44,7 +44,7 @@ export const Home = () => {
 
     setSuggestedCategories(newSuggestedCategories)
   }
-  const changeSuggestedCategoriesDebounced = useDebounce(changeSuggestedCategories, 800)
+  const changeSuggestedCategoriesDebounced = useDebounce(changeSuggestedCategories, 500)
 
   const queryPapers = async () => {
     setIsLoadingPapers(true)

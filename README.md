@@ -1,30 +1,48 @@
+<div align="right">
+  <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/master/backend/vecsim_app/data/untitled.png?raw=true" width="40%"><img></a>
+</div>
 
 <div align="center">
-    <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/RedisVentures/redis-arXiv-search/blob/main/backend/vecsim_app/data/redis-logo.png?raw=true" width="30%"><img></a>
+    <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/master/backend/vecsim_app/data/redis-logo.png?raw=true" width="20%"><img></a>
+    <a href="https://github.com/RedisVentures/redis-arXiv-search"><img src="https://github.com/liram11/untitled1-vector-search/blob/master/backend/vecsim_app/data/saturn.jpg?raw=true" width="20%"><img></a>
     <br />
     <br />
 <div display="inline-block">
-    <a href="https://docsearch.redisventures.com"><b>Hosted Demo</b></a>&nbsp;&nbsp;&nbsp;
-    <a href="https://github.com/RedisVentures/redis-arXiv-search"><b>Code</b></a>&nbsp;&nbsp;&nbsp;
-    <a href="https://datasciencedojo.com/blog/ai-powered-document-search/"><b>Blog Post</b></a>&nbsp;&nbsp;&nbsp;
+    <a href="https://untitled1-vector-search.community.saturnenterprise.io/"><b>Hosted Demo 🤩</b></a>&nbsp;&nbsp;&nbsp;
+    <a href="https://github.com/liram11/untitled1-vector-search"><b>Code 💾</b></a>&nbsp;&nbsp;&nbsp;
+    <a href="https://paulomaia20.medium.com/vector-search-engineering-lab-untitled1-cfa86576f1dc"><b>Blog Post 🤓</b></a>&nbsp;&nbsp;&nbsp;
     <a href="https://redis.io/docs/stack/search/reference/vectors/"><b>Redis VSS Documentation</b></a>&nbsp;&nbsp;&nbsp;
   </div>
     <br />
     <br />
 </div>
 
-# Redis arXiv Search
-*This repository is the official codebase for the arxiv paper search app hosted at: **https://docsearch.redisventures.com***
+## Changes to the baseline solution
+> Original repo: https://github.com/RedisVentures/redis-arXiv-search
 
-Through the RediSearch module, vector data types and search indexes can be added to Redis. This turns Redis into
-a highly performant, in-memory, vector database, which can be used for many types of applications.
+1. **Improved paper embeddings**: changed model to [sentence-transformers/all-distilroberta-v1](https://www.sbert.net/docs/pretrained_models.html)
+We found that this gave more realistic results, at least for our use case.
+
+2. **Enabled Redis search query to join categories with "AND" in addition to "OR" operator**. Thus, one can now define only the paper categories they're interested in and search for the papers that include all these categories, not just one. See [git blame](https://github.com/liram11/untitled1-vector-search/blame/2f26a01bb41cc86d95ef424f07cea39c8b97b27f/backend/vecsim_app/search_index.py#L130-L132).
+
+3. **Enabled multi-input vector search**. We decided that some it might be useful for a scientist to know what are the papers "in between" the papers *A*, *B* and *C*. For that, we extended our Web UI to accept multiple article abstracts as input (along with a single set of "years" and "categories" configuration), we encode each abstract as a vector and then find the *mean* vector of these vectors. In case of two input papers, this is the middle of the line segment between two coordinates. In case of three papers, this is a centroid of a triangle of three coordinates. Thus, searching similar articles within the sphere around these points of interests can bring some interesting results (for example, it can help find multi-disciplinary papers related to the given papers).
+
+4. **Implemented auto-detection of the categories**. We thought that it's a difficult work to assign the one of >150 categories manually and we trained and deployed a multi-label classification model that predicts categories for given text inputs. Our model performs relatively well: 
+
+| *Model*                  | *Accuracy (%)* | *F1 (%)* | *AUC (%)* |
+|----------------------------|------------------|------------|-------------|
+| *Without pre-processing* |       39.60      |    65.55   |    78.03    |
+| *with pre-processing*    |       39.76      |    66.95   |    80.06    |
+
+This model is deployed on the backend route `POST /predict-categories` and is called by the frontend in order to auto-select the dropdown checkbox of the category selection for all user input texts. In the backend route, we can select the threshold for displaying the categories, but we pre-selected a value empirically.
+
+For more details about the model technicalities, please go to [the detailed README](data/README.md).
 
 ___
 
-Here we showcase Redis vector similarity search (VSS) applied to a document search/retrieval use case. Read more about AI-powered search in [our blog post](https://datasciencedojo.com/blog/ai-powered-document-search/) (shout out to our friends at Data Science Dojo).
+Here we showcase Redis vector similarity search (VSS) applied to a document search/retrieval use case.
 
-
-![Screen Shot 2022-09-20 at 12 20 16 PM](https://user-images.githubusercontent.com/13009163/191346916-4b8f648f-7552-4910-ad4e-9cc117230f00.png)
+![demo website screenshot](backend/vecsim_app/data/untitled1-demo.png)
 
 
 ## Getting Started
